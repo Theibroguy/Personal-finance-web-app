@@ -42,7 +42,21 @@
 
       </section>
     </main>
-  
+    
+
+      <!-- Form -->
+      <section id="transaction-form-section">
+        <h2> Add New transaction</h2>
+        <form id="transaction-form">
+          <input type="text" id="title" placeholder="Transaction Title" required />
+          <input type="number" id="amount" placeholder="Amount (₦)" required />
+          <select id="type">
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+          <button type="submit">Add Transaction</button>
+        </form>
+      </section>
     <script src="Script.js"></script>
 </body>
 </html>

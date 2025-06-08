@@ -1,6 +1,6 @@
 // Sample data - later we'll replace this with dynamic input
 const transactions = [
-  {id: 1, description: 'Salary', amount: 5000},
+  {id: 1, description: 'Salary', amount: 50000},
   {id: 2, description: 'Groceries', amount: -7000},
   {id: 3, description: 'Transport', amount: -2000}
 ];
@@ -45,3 +45,38 @@ function init() {
 }
 
 init();
+
+//Reference the form and inputs
+const form = document.getElementById('transaction-form');
+const titleInput = document.getElementById('title');
+const amountInput = document.getElementById('amount');
+const typeInput = document.getElementById('type');
+
+
+// Handle form submit
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  
+  const title = titleInput.value.trim();
+  const amount = parseFloat(amountInput.value);
+  const type = typeInput.value;
+
+  if (title === '' || isNaN(amount)) {
+    alert('please fill in all fields correctly');
+    return;
+  }
+
+
+  const newTransaction = {
+    id: Date.now(),
+    title,
+    amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount)
+  };
+
+
+  transactions.push(newTransaction);   //Add to the array
+  displayTransactions();               // Re-render list
+  updateSummary();                     //Update totals
+  form.reset();                        // Clear the form
+});
