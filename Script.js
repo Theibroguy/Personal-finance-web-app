@@ -1,3 +1,99 @@
+// From this section is the improved or refined code
+//Get from localStorage or fallback to empty array
+let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+
+//DOM references
+const form = document.getElementById('transaction-form');
+const titleInput = document.getElementById('title');
+const amountInput = document.getElementById('amount');
+const typeInput = document.getElementById('type');
+const transactionList = document.getElementById('transaction-list');
+const incomeDisplay = document.getElementById('income');
+const expenseDisplay = document.getElementById('expense');
+const balanceDisplay = document.getElementById('balance');
+
+
+// Save to localStorage
+function saveTransaction() {
+  localStorage.setItem('transactions', JSON.stringify(transactions));
+};
+
+
+// Display transactions in List
+function displayTransactions() {
+  transactionList.innerHTML = '';
+
+  transactions.forEach(transaction => {
+    const li = document.createElement('li');
+    li.className = transaction.amount < 0 ? 'expense' : 'income';
+    li.textContent = `${transaction.title} - ₦${Math.abs(transaction.amount)}`;
+    li.style.color = transaction.amount < 0 ? 'red' : 'green';
+    transactionList.appendChild(li);
+  });
+};
+
+
+// Update summary
+function updateSummary () {
+  const income = transactions
+    .filter(t => t.amount > 0)
+    .reduce((sum, t) => sum + t.amount, 0);
+  const expense = transactions
+    .filter(t => t.amount < 0)
+    .reduce((sum, t) => sum + t.amount, 0);
+  const balance = income + expense;
+
+  incomeDisplay.textContent = `₦${income.toFixed(2)}`;
+  expenseDisplay.textContent = `₦${Math.abs(expense).toFixed(2)}`;
+  balanceDisplay.textContent = `₦${balance.toFixed(2)}`
+};
+
+
+// Submit handler
+form.addEventListener('submit', function (e) {
+  e.preventDefault();
+
+
+  const title = titleInput.value.trim();
+  const amount = parseFloat(amountInput.value);
+  const type = typeInput.value;
+
+  if(title === '' || isNaN(amount)) {
+    alert('Please fill in all fields correctly.');
+    return;
+  }
+
+  const newTransaction = {
+    id: Date.now(),
+    title,
+    amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount)
+  };
+
+  transactions.push(newTransaction);
+  saveTransaction();
+  displayTransactions();
+  updateSummary();
+  form.requestFullscreen();
+});
+
+
+// Initial load
+displayTransactions();
+updateSummary();
+
+
+
+
+
+
+
+
+
+
+
+
+/* This is just to test if everything is working
 // Sample data - later we'll replace this with dynamic input
 const transactions = [
   {id: 1, description: 'Salary', amount: 50000},
@@ -80,3 +176,4 @@ form.addEventListener('submit', function(e) {
   updateSummary();                     //Update totals
   form.reset();                        // Clear the form
 });
+*/
