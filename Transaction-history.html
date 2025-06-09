@@ -7,9 +7,21 @@
   <link rel="stylesheet" href="history.css">
 </head>
 <body>
-  <header>
+  <div class="container">
     <h1>Transaction history</h1>
-    <a href="Dashboard.html" class="btn"></a>
-  </header>
+    <div id="filters">
+      <button data-filter="all">All</button>
+      <button data-filter="income">Income</button>
+      <button data-filter="expense">Expense</button>
+    </div>
+     <ul id="transaction-list">
+      <!-- Transactions will be reflected here by Javascript-->
+     </ul>
+
+     <a href="Dashboard.html" class="back-link">← Back to Dashboard</a>
+  </div>
+
+
+  <script src="history.js"></script>
 </body>
 </html>
