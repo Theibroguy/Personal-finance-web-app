@@ -7,20 +7,17 @@
   <link rel="stylesheet" href="history.css">
 </head>
 <body>
-  <div class="container">
-    <h1>Transaction history</h1>
-    <div id="filters">
-      <button data-filter="all">All</button>
-      <button data-filter="income">Income</button>
-      <button data-filter="expense">Expense</button>
-    </div>
-     <ul id="transaction-list">
-      <!-- Transactions will be reflected here by Javascript-->
-     </ul>
-
-     <a href="Dashboard.html" class="back-link">← Back to Dashboard</a>
+  <h1>Transaction history</h1>
+  <div class="filter-container">
+    <label for="filter">Filter:</label>
+    <select id="filter">
+      <option value="all">All</option>
+      <option value="income">Income</option>
+      <option value="expense">Expense</option>
+    </select>
   </div>
 
+  <div id="transaction-list"></div>
 
   <script src="history.js"></script>
 </body>

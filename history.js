@@ -1,40 +1,60 @@
 document.addEventListener('DOMContentLoaded', function () {
   const transactionList = document.getElementById('transaction-list');
-  const filterButtons = document.querySelectorAll('#filters button');
+  const filterSelect = document.getElementById('filter');
 
-  // Get stored transactions
-  const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+  let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
-  function renderTransactions(filter = 'all') {
+  function renderTransactions(filtered) {
     transactionList.innerHTML = '';
 
-    const filtered = transactions.filter(transaction => {
-      if (filter === 'income') return transaction.amount > 0;
-      if (filter === 'expense') return transaction.amount < 0;
-      return true; // 'all'
-    });
-
     if (filtered.length === 0) {
-      transactionList.innerHTML = '<li>No transaction found.</li>';
+      transactionList.innerHTML = '<li>No transactions found.</li>';
       return;
     }
 
+    // Group transactions by date
+    const grouped = {};
+
     filtered.forEach(transaction => {
-      const li = document.createElement('li');
-      li.textContent = `${transaction.title}: ${transaction.amount > 0 ? '+' : ''}₦${Math.abs(transaction.amount)}`;
-      li.classList.add(transaction.amount > 0 ? 'income' : 'expense');
-      transactionList.appendChild(li);
+      const date = new Date(transaction.id).toLocaleDateString();
+      if (!grouped[date]) {
+        grouped[date] = [];
+      }
+      grouped[date].push(transaction);
+    });
+
+    // Display grouped transactions
+    Object.keys(grouped).forEach(date => {
+      const dateHeader = document.createElement('h3');
+      dateHeader.textContent = date;
+      transactionList.appendChild(dateHeader);
+
+      grouped[date].forEach(transaction => {
+        const li = document.createElement('li');
+        li.textContent = `${transaction.title}: ₦${Math.abs(transaction.amount)}`;
+        li.className = transaction.amount < 0 ? 'expense' : 'income';
+        transactionList.appendChild(li);
+      });
     });
   }
 
-  // Event listeners for filter buttons
-  filterButtons.forEach(button => {
-    button.addEventListener('click', () => {
-      const selected = button.getAttribute('data-filter');
-      renderTransactions(selected);
-    });
-  });
+  // Filtering function
+  function applyFilter() {
+    const selected = filterSelect.value;
+
+    let filteredTransactions = [...transactions];
+
+    if (selected === 'income') {
+      filteredTransactions = transactions.filter(t => t.amount > 0);
+    } else if (selected === 'expense') {
+      filteredTransactions = transactions.filter(t => t.amount < 0);
+    }
+
+    renderTransactions(filteredTransactions);
+  }
+
+  filterSelect.addEventListener('change', applyFilter);
 
   // Initial load
-  renderTransactions();
+  applyFilter();
 });
