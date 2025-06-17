@@ -20,17 +20,33 @@ function saveTransaction() {
 };
 
 
-// Display transactions in List
+// Display transactions in List and delete a transaction in list
 function displayTransactions() {
   transactionList.innerHTML = '';
 
   transactions.forEach(transaction => {
     const li = document.createElement('li');
     li.className = transaction.amount < 0 ? 'expense' : 'income';
-    li.textContent = `${transaction.title} - ₦${Math.abs(transaction.amount)}`;
-    li.style.color = transaction.amount < 0 ? 'red' : 'green';
+
+    const text = document.createTextNode(`${transaction.title} - ₦${Math.abs(transaction.amount)}`);
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = '✖';
+    deleteBtn.className = 'delete-btn';
+    deleteBtn.onclick = function () {
+      deleteTransaction(transaction.id);
+    };
+
+    li.appendChild(text);
+    li.appendChild(deleteBtn);
     transactionList.appendChild(li);
   });
+};
+
+function deleteTransaction(id) {
+  transactions = transactions.filter(t => t.id !== id);
+  saveTransaction();
+  displayTransactions();
+  updateSummary();
 };
 
 

@@ -146,4 +146,20 @@ form button:hover {
   background-color: #27ae60;
 }
 
+.delete-btn {
+  background: transparent;
+  border: none;
+  color: crimson;
+  font-weight: bold;
+  float: right;
+  cursor: pointer;
+  margin-left: 10px;
+}
 
+.income {
+  color: green;
+}
+
+.expense {
+  color: red;
+}
