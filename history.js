@@ -2,12 +2,12 @@ document.addEventListener('DOMContentLoaded', function () {
   const transactionList = document.getElementById('transaction-list');
   const filterSelect = document.getElementById('filter');
 
-  let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
-  function renderTransactions(filtered) {
+  function renderTransactions(filter = 'all') {
     transactionList.innerHTML = '';
+    const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
-    if (filtered.length === 0) {
+    if (transactions.length === 0) {
       transactionList.innerHTML = '<li>No transactions found.</li>';
       return;
     }
@@ -15,46 +15,38 @@ document.addEventListener('DOMContentLoaded', function () {
     // Group transactions by date
     const grouped = {};
 
-    filtered.forEach(transaction => {
-      const date = new Date(transaction.id).toLocaleDateString();
-      if (!grouped[date]) {
-        grouped[date] = [];
-      }
+    transactions.forEach(transaction => {
+      //Apply the filter
+      if (filter === 'income' && transaction.amount < 0) return;
+      if (filter === 'expense' && transaction.amount > 0) return;
+
+      const date = transaction.date || 'Unknown Date';
+      if (!grouped[date]) grouped[date] = [];
       grouped[date].push(transaction);
     });
 
     // Display grouped transactions
-    Object.keys(grouped).forEach(date => {
-      const dateHeader = document.createElement('h3');
-      dateHeader.textContent = date;
-      transactionList.appendChild(dateHeader);
+    Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a)).forEach(date => {
+      const heading = document.createElement('h3');
+      heading.textContent = new Date(date).toDateString();
+      heading.style.marginTop = '20px';
+      transactionList.appendChild(heading);
 
       grouped[date].forEach(transaction => {
         const li = document.createElement('li');
         li.textContent = `${transaction.title}: ₦${Math.abs(transaction.amount)}`;
-        li.className = transaction.amount < 0 ? 'expense' : 'income';
+        li.classList.add(transaction.amount < 0 ? 'expense' : 'income');
+        li.style.color = transaction.amount < 0 ? 'red' : 'green';
         transactionList.appendChild(li);
       });
     });
   }
 
-  // Filtering function
-  function applyFilter() {
-    const selected = filterSelect.value;
+  // Initial render
+  renderTransactions();
 
-    let filteredTransactions = [...transactions];
-
-    if (selected === 'income') {
-      filteredTransactions = transactions.filter(t => t.amount > 0);
-    } else if (selected === 'expense') {
-      filteredTransactions = transactions.filter(t => t.amount < 0);
-    }
-
-    renderTransactions(filteredTransactions);
-  }
-
-  filterSelect.addEventListener('change', applyFilter);
-
-  // Initial load
-  applyFilter();
+  // Filter dropdown handler
+  filterSelect.addEventListener('change', () => {
+    renderTransactions(filterSelect.value);
+  });
 });

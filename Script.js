@@ -83,7 +83,7 @@ form.addEventListener('submit', function (e) {
   const newTransaction = {
     id: Date.now(),
     title,
-    amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount)
+    amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount), date: new Date().toISOString().split('T')[0] // Format: YYYY-MM-DD
   };
 
   transactions.push(newTransaction);
