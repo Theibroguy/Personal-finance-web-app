@@ -1,11 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
   const transactionList = document.getElementById('transaction-list');
   const filterSelect = document.getElementById('filter');
+  const dateSearch = document.getElementById('date-search');
+
+  const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
 
-  function renderTransactions(filter = 'all') {
+  function renderTransactions(filter = 'all', date = '') {
     transactionList.innerHTML = '';
-    const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
     if (transactions.length === 0) {
       transactionList.innerHTML = '<li>No transactions found.</li>';
@@ -17,16 +19,26 @@ document.addEventListener('DOMContentLoaded', function () {
 
     transactions.forEach(transaction => {
       //Apply the filter
-      if (filter === 'income' && transaction.amount < 0) return;
-      if (filter === 'expense' && transaction.amount > 0) return;
+      if (filter !== 'all' && ((filter === 'income' && transaction.amount < 0) || (filter === 'expense' && transaction.amount > 0))) return;
 
-      const date = transaction.date || 'Unknown Date';
-      if (!grouped[date]) grouped[date] = [];
-      grouped[date].push(transaction);
+      // Apply date filter (if any)
+      if (date) {
+        const transDate = transaction.date ? transaction.date.split('T')[0] : '';
+        if (transDate !== date) return;
+      }
+
+      const dateKey = transaction.date ? transaction.date.split('T')[0] : 'Unknown Date';
+      if (!grouped[date]) grouped[dateKey] = [];
+      grouped[dateKey].push(transaction);
     });
 
-    // Display grouped transactions
-    Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a)).forEach(date => {
+    const dates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
+
+    if (dates.length === 0) {
+      transactionList.innerHTML = '<li>No matching transactions.</li>';
+    }
+
+    dates.forEach(date => {
       const heading = document.createElement('h3');
       heading.textContent = new Date(date).toDateString();
       heading.style.marginTop = '20px';
@@ -42,11 +54,18 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-  // Initial render
+   
+
+  // on load
   renderTransactions();
 
-  // Filter dropdown handler
+  // On filter change
   filterSelect.addEventListener('change', () => {
-    renderTransactions(filterSelect.value);
+    renderTransactions(filterSelect.value, dateSearch.value);
+  });
+
+  // On date search change
+  dateSearch.addEventListener('change', () => {
+    renderTransactions(filterSelect.value, dateSearch.value)
   });
 });
