@@ -46,7 +46,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
       grouped[date].forEach(transaction => {
         const li = document.createElement('li');
-        li.textContent = `${transaction.title}: ₦${Math.abs(transaction.amount)}`;
+        const formattedAmount = Math.abs(transaction.amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        li.textContent = `${transaction.title}: ₦${formattedAmount}`;  
         li.classList.add(transaction.amount < 0 ? 'expense' : 'income');
         li.style.color = transaction.amount < 0 ? 'red' : 'green';
         transactionList.appendChild(li);

@@ -23,20 +23,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function displayTransactions() {
-    transactionList.innerHTML = '';
+  transactionList.innerHTML = '';
 
-    transactions.forEach(transaction => {
-      const li = document.createElement('li');
-      li.className = transaction.amount < 0 ? 'expense' : 'income';
-      li.innerHTML = `${transaction.title} - ₦${Math.abs(transaction.amount)} <button class="delete-btn">✖</button>`;
+  transactions.forEach(transaction => {
+    const li = document.createElement('li');
+    li.className = transaction.amount < 0 ? 'expense' : 'income';
 
-      li.querySelector('.delete-btn').addEventListener('click', () => {
-        deleteTransaction(transaction.id);
-      });
+    const formattedAmount = Math.abs(transaction.amount)
+      .toFixed(2)
+      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-      transactionList.appendChild(li);
+    li.innerHTML = `${transaction.title} - ₦${formattedAmount} <button class="delete-btn">✖</button>`;
+
+    li.querySelector('.delete-btn').addEventListener('click', () => {
+      deleteTransaction(transaction.id);
     });
-  }
+
+    transactionList.appendChild(li);
+  });
+}
 
   function deleteTransaction(id) {
     transactions = transactions.filter(t => t.id !== id);
@@ -50,9 +55,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const expense = transactions.filter(t => t.amount < 0).reduce((acc, t) => acc + t.amount, 0);
     const balance = income + expense;
 
-    incomeDisplay.textContent = `Income: ₦${income.toFixed(2)}`;
-    expenseDisplay.textContent = `Expense: ₦${Math.abs(expense).toFixed(2)}`;
-    balanceDisplay.textContent = `Balance: ₦${balance.toFixed(2)}`;
+    incomeDisplay.textContent = `Income: ₦${income.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    expenseDisplay.textContent = `Expense: ₦${Math.abs(expense).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    balanceDisplay.textContent = `Balance: ₦${balance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
   }
 
   form.addEventListener('submit', (e) => {
