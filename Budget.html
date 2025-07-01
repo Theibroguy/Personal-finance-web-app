@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Budget Tracker</title>
+  <link rel="stylesheet" href="budget.css" /> 
+</head>
+<body>
+  <div class="wrapper">
+    <!-- Sidebar -->
+     <aside class="sidebar" id="sidebar">
+      <button id="toggle-btn" class="toggle-btn" title="Toggle Sidebar">☰</button>
+      <nav>
+        <ul>
+          <li><a href="Dashboard.html">Dashboard</a></li>
+          <li><a href="Transaction-history.html">Transaction-history</a></li>
+          <li><a href="Budget.html" class="active">Budget</a></li>
+          <li><a href="#">Settings</a></li>
+        </ul>
+      </nav>
+     </aside>
+
+     <main class="main-content">
+      <header><h1>Budget Tracker</h1></header>
+      
+      <section class="budget-form-section">
+        <form id="budget-form">
+          <input type="text" id="category" placeholder="Category (e.g. Food)" />
+          <input type="text" id="limit" placeholder="Limit (₦)" required />
+          <button type="submit" id="Add-btn">Add Budget</button>
+        </form>
+      </section>
+
+      <section class="budget-list-section">
+        <h2>Your Budgets</h2>
+        <ul id="budget-list"></ul>
+      </section>
+     </main>
+  </div>
+
+
+  <script src="budget.js"></script>
+</body>
+</html>

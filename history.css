@@ -23,7 +23,7 @@ body {
   width: 220px;
   background-color:  #1e1e2f;
   color: white;
-  height: 100vh;
+  height: full;
   padding: 20px 10px;
   transition: width 0.3s ease;
   position: relative;
