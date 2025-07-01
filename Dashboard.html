@@ -1,52 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Personal Finance App</title>
   <link rel="stylesheet" href="Dashboard.css" />
 </head>
 <body>
-  <!-- Sidebar -->
-   <aside class="sidebar">
-    <nav>
-      <ul>
-        <li><a href="#">Dashboard</a></li>
-        <li><a href="Transaction-history.html">Transaction history</a></li>
-        <li><a href="#">Budget</a></li>
-        <li><a href="#">Settings</a></li>
-      </ul>
-    </nav>
-   </aside>
-
-
-   <!-- Main content -->
-    <main class="main-content">
-      <header>
-        <h1>Dashboard</h1>
-      </header>
-
-
-      <section class="summary-cards">
-        <div id="card-balance" class="card">Balance: ₦0.00</div>
-        <div id="card-income" class="card">Income: ₦0.00</div>
-        <div id="card-expense" class="card">Expense: ₦0.00</div>
-
-      </section>
-
-      <section class="recent-transactions">
-        <h2>Recent Transactions</h2>
-        <ul id="transaction-list">
-          <!-- Transaction list will go here -->
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <button id="toggle-btn" class="toggle-btn" title="Toggle Sidebar">☰</button>
+      <nav>
+        <ul>
+          <li><a href="Dashboard.html">Dashboard</a></li>
+          <li><a href="Transaction-history.html">Transaction history</a></li>
+          <li><a href="#">Budget</a></li>
+          <li><a href="#">Settings</a></li>
         </ul>
+      </nav>
+    </aside>
 
-      </section>
-    </main>
-    
+    <!-- Main content + Form grouped in main-panel -->
+    <div class="main-panel">
+      <main class="main-content">
+        <header><h1>Dashboard</h1></header>
+        <section class="summary-cards">
+          <div id="balance" class="card">Balance: ₦0.00</div>
+          <div id="income" class="card">Income: ₦0.00</div>
+          <div id="expense" class="card">Expense: ₦0.00</div>
+        </section>
+
+        <section class="recent-transactions">
+          <h2>Recent Transactions</h2>
+          <ul id="transaction-list"></ul>
+        </section>
+      </main>
 
       <!-- Form -->
       <section id="transaction-form-section">
-        <h2> Add New transaction</h2>
+        <h2>Add New Transaction</h2>
         <form id="transaction-form">
           <input type="text" id="title" placeholder="Transaction Title" required />
           <input type="number" id="amount" placeholder="Amount (₦)" required />
@@ -57,6 +50,9 @@
           <button type="submit">Add Transaction</button>
         </form>
       </section>
-    <script src="Script.js"></script>
+    </div>
+  </div>
+
+  <script src="Script.js"></script>
 </body>
 </html>
