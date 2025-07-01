@@ -1,33 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transaction history</title>
-  <link rel="stylesheet" href="history.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transaction History</title>
+  <link rel="stylesheet" href="history.css" />
 </head>
 <body>
-  <div class="header">
-    <h1>Transaction history</h1>
-    <a href="Dashboard.html" class="back-button"><span class="arrow">←</span> Back to Dashboard</a>
-    <div class="filter-container">
-      <label for="filter">Filter:</label>
-      <select id="filter">
-        <option value="all">All</option>
-        <option value="income">Income</option>
-        <option value="expense">Expense</option>
-    </select>
+  <div class="wrapper">
+    <!-- Sidebar (same as dashboard) -->
+    <aside class="sidebar" id="sidebar">
+      <button id="toggle-btn" class="toggle-btn">☰</button>
+      <nav>
+        <ul>
+          <li><a href="Dashboard.html">Dashboard</a></li>
+          <li><a href="Transaction-history.html">Transaction History</a></li>
+          <li><a href="#">Budget</a></li>
+          <li><a href="#">Settings</a></li>
+        </ul>
+      </nav>
+    </aside>
 
-    <div class="date-filter">
-      <label for="date-search">Search by Date</label>
-      <input type="date" id="date-search">
-    </div>
-  </div>
-  </div>
-  
-  
+    <!-- Main Content -->
+    <main class="main-content">
+      <header>
+        <h1>Transaction History</h1>
+      </header>
 
-  <ul id="transaction-list"></ul>
+      <!-- Fixed Filter/Search Bar -->
+      <div class="filter-bar">
+        <div class="filter-group">
+          <label for="filter">Type:</label>
+          <select id="filter">
+            <option value="all">All</option>
+            <option value="income">Income</option>
+            <option value="expense">Expense</option>
+          </select>
+        </div>
+        <div class="filter-group">
+          <label for="date-search">Date:</label>
+          <input type="date" id="date-search" />
+        </div>
+      </div>
+
+      <!-- Transactions -->
+      <section>
+        <ul id="transaction-list" class="transaction-list"></ul>
+      </section>
+    </main>
+  </div>
 
   <script src="history.js"></script>
 </body>

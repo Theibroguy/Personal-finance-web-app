@@ -69,3 +69,14 @@ document.addEventListener('DOMContentLoaded', function () {
     renderTransactions(filterSelect.value, dateSearch.value)
   });
 });
+
+
+// SIDEBAR TOGGLE FUNCTIONALITY
+const toggleBtn = document.getElementById('toggle-btn');
+const sidebar = document.getElementById('sidebar');
+
+  if (toggleBtn && sidebar) {
+    toggleBtn.addEventListener('click', function () {
+      sidebar.classList.toggle('collapsed');
+    });
+  }
