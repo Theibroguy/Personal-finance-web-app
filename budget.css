@@ -178,6 +178,7 @@ header h1 {
 
 .progress-bar {
   height: 100%;
-  transition: width 0.4s ease;
+  width: 0; /* Start from 0 */
+  transition: width 1s ease-in-out;
   border-radius: 6px;
 }

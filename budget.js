@@ -53,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
       li.innerHTML = `
         <div><strong>${budget.category}</strong> - ₦${formatAmount(spent)} spent out of ₦${formatAmount(budget.amount)}</div>
         <div class="progress-container">
-          <div class="progress-bar" style="width: ${percentageUsed}%; background-color: ${barColor};"></div>
+          <div class="progress-bar" data-width = "${percentageUsed}" style = "background-color: ${barColor};"></div>
         </div>
         <button class="delete-btn" title="Delete">✖</button>
       `;
@@ -66,6 +66,11 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       budgetList.appendChild(li);
+
+      const progressBar = li.querySelector('.progress-bar');
+      setTimeout (() => {
+        progressBar.style.width = progressBar.dataset.width + '%';
+      }, 100);
     });
   }
 
