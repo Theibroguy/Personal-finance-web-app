@@ -68,59 +68,74 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function updateChart() {
-    const canvas = document.getElementById('spendingChart');
-    if (!canvas) {
-      console.warn("Canvas not found!");
-      return;
-    }
+  const canvas = document.getElementById('spendingChart');
+  if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      console.warn("Canvas context is null!");
-      return;
-    }
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
 
-    const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-    const expenses = transactions.filter(t => t.amount < 0);
+  const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
-    const categorySums = {};
-    expenses.forEach(t => {
-      const title = t.title.toLowerCase();
-      categorySums[title] = (categorySums[title] || 0) + Math.abs(t.amount);
-    });
+  const categoryMap = {
+    "chicken republic": "Food",
+    "market": "Food",
+    "mr biggs": "Food",
+    "groceries": "Food",
+    "uber": "Transport",
+    "bolt": "Transport",
+    "bus": "Transport",
+    "fuel": "Transport",
+    "electricity": "Utilities",
+    "water": "Utilities",
+    "airtime": "Communication",
+    "data": "Communication",
+    // You can expand this
+  };
 
-    const categories = Object.keys(categorySums);
-    const values = Object.values(categorySums);
+  const expenses = transactions.filter(t => t.amount < 0);
+  const categorySums = {};
 
-    if (window.spendingChart instanceof Chart) {
-      window.spendingChart.destroy();
-    }
+  expenses.forEach(t => {
+    const title = t.title.toLowerCase();
+    const matchedCategory = categoryMap[title] || "Others";
 
-    window.spendingChart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: categories.map(cat => cat[0].toUpperCase() + cat.slice(1)),
-        datasets: [{
-          label: 'Actual Spending by Category',
-          data: values,
-          backgroundColor: [
-            '#4CAF50', '#FF6384', '#36A2EB',
-            '#FFCE56', '#8E44AD', '#E67E22'
-          ],
-          borderWidth: 1
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'bottom'
-          }
+    categorySums[matchedCategory] = (categorySums[matchedCategory] || 0) + Math.abs(t.amount);
+  });
+
+  const categories = Object.keys(categorySums);
+  const values = Object.values(categorySums);
+
+  // Destroy old chart if exists
+  if (window.spendingChart instanceof Chart) {
+    window.spendingChart.destroy();
+  }
+
+  // Draw chart
+  window.spendingChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: categories,
+      datasets: [{
+        label: 'Actual Spending by Category',
+        data: values,
+        backgroundColor: [
+          '#4CAF50', '#FF6384', '#36A2EB',
+          '#FFCE56', '#8E44AD', '#E67E22',
+          '#2ECC71', '#3498DB', '#E74C3C'
+        ],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: {
+        legend: {
+          position: 'bottom'
         }
       }
-    });
-  }
+    }
+  });
+}
 
   // Init
   renderBudgets();
