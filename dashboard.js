@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const titleInput = document.getElementById('title');
   const amountInput = document.getElementById('amount');
   const typeInput = document.getElementById('type');
+  const categoryInput = document.getElementById('category');
 
   const transactionList = document.getElementById('transaction-list');
   const incomeDisplay = document.getElementById('income');
@@ -66,8 +67,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const title = titleInput.value.trim();
     const amount = parseFloat(amountInput.value);
     const type = typeInput.value;
+    const category = categoryInput.value;
 
-    if (title === '' || isNaN(amount)) {
+    if (title === '' || isNaN(amount) || category === '') {
       alert('Please fill in all fields correctly.');
       return;
     }
@@ -75,7 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const newTransaction = {
       id: Date.now(),
       title,
-      amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount),
+      amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount), category
     };
 
     transactions.push(newTransaction);
