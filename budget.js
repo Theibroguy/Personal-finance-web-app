@@ -88,73 +88,60 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   function updateChart() {
-  const canvas = document.getElementById('spendingChart');
-  if (!canvas) return;
+    const canvas = document.getElementById('spendingChart');
+    if (!canvas) return;
 
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-  const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
-  const categoryMap = {
-    "chicken republic": "Food",
-    "market": "Food",
-    "mr biggs": "Food",
-    "groceries": "Food",
-    "uber": "Transport",
-    "bolt": "Transport",
-    "bus": "Transport",
-    "fuel": "Transport",
-    "electricity": "Utilities",
-    "water": "Utilities",
-    "airtime": "Communication",
-    "data": "Communication",
-    // You can expand this
-  };
+    const categorySums = {};
+    transactions
+      .filter(t => t.amount < 0)
+      .forEach(t => {
+        const category = t.category ? t.category.trim() : "Others";
+        categorySums[category] = (categorySums[category] || 0) + Math.abs(t.amount);
+      });
 
-  const expenses = transactions.filter(t => t.amount < 0);
-  const categorySums = {};
+    const categoryColors = {
+      Food: '#4CAF50',
+      Transport: '#FF6384',
+      Clothes: '#36A2EB',
+      Utilities: '#FFCE56',
+      Communication: '#8E44AD',
+      Others: '#E67E22'
+    };
 
-  expenses.forEach(t => {
-    const category = t.category ? t.category.trim() : "Others";
+    const categories = Object.keys(categorySums);
+    const values = Object.values(categorySums);
+    const backgroundColors = categories.map(cat => categoryColors[cat] || '#999');
 
-    categorySums[category] = (categorySums[category] || 0) + Math.abs(t.amount);
-  });
+    if (window.spendingChart instanceof Chart) {
+      window.spendingChart.destroy();
+    }
 
-  const categories = Object.keys(categorySums);
-  const values = Object.values(categorySums);
-
-  // Destroy old chart if exists
-  if (window.spendingChart instanceof Chart) {
-    window.spendingChart.destroy();
-  }
-
-  // Draw chart
-  window.spendingChart = new Chart(ctx, {
-    type: 'doughnut',
-    data: {
-      labels: categories,
-      datasets: [{
-        label: 'Actual Spending by Category',
-        data: values,
-        backgroundColor: [
-          '#4CAF50', '#FF6384', '#36A2EB',
-          '#FFCE56', '#8E44AD', '#E67E22',
-          '#2ECC71', '#3498DB', '#E74C3C'
-        ],
-        borderWidth: 1
-      }]
-    },
-    options: {
-      responsive: true,
-      plugins: {
-        legend: {
-          position: 'bottom'
+    window.spendingChart = new Chart(ctx, {
+      type: 'doughnut',
+      data: {
+        labels: categories,
+        datasets: [{
+          label: 'Actual Spending by Category',
+          data: values,
+          backgroundColor: backgroundColors,
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom'
+          }
         }
       }
-    }
-  });
-}
+    });
+  }
 
   // Init
   renderBudgets();

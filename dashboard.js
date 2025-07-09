@@ -1,6 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
   let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
+  const categoryColors = {
+    Food: '#4CAF50',
+    Transport: '#FF6384',
+    Clothes: '#36A2EB',
+    Utilities: '#FFCE56',
+    Communication: '#8E44AD',
+    Others: '#E67E22'
+  };
   const form = document.getElementById('transaction-form');
   const titleInput = document.getElementById('title');
   const amountInput = document.getElementById('amount');
@@ -34,7 +42,15 @@ document.addEventListener('DOMContentLoaded', () => {
       .toFixed(2)
       .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-    li.innerHTML = `${transaction.title} - ₦${formattedAmount} <button class="delete-btn">✖</button>`;
+    const category = transaction.category || "Others";
+    const color = categoryColors[category] || '#999';
+
+    li.innerHTML = `
+      <span style = "color: ${color}; font-weight: 600;">
+        ${transaction.title} (${category})
+      </span> - ₦${formattedAmount}
+      <button class = "delete-btn">✖</button>
+    `;
 
     li.querySelector('.delete-btn').addEventListener('click', () => {
       deleteTransaction(transaction.id);
