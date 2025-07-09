@@ -31,10 +31,30 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    budgets.forEach((item, index) => {
+    const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+
+    budgets.forEach((budget, index) => {
+      const budgetCategory = budget.category.toLowerCase();
+
+      const spent = transactions
+        .filter(t => t.amount < 0 && t.category?.toLowerCase() === budgetCategory)
+        .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+      const percentageUsed = Math.min((spent / budget.amount) * 100, 100).toFixed(1);
+
+      let barColor = '#4CAF50'; // green
+      if (spent > budget.amount) {
+        barColor = '#E74C3C'; // red
+      } else if (percentageUsed >= 80) {
+        barColor = '#F39C12'; // yellow
+      }
+
       const li = document.createElement('li');
       li.innerHTML = `
-        ${item.category} - ₦${formatAmount(item.amount)}
+        <div><strong>${budget.category}</strong> - ₦${formatAmount(spent)} spent out of ₦${formatAmount(budget.amount)}</div>
+        <div class="progress-container">
+          <div class="progress-bar" style="width: ${percentageUsed}%; background-color: ${barColor};"></div>
+        </div>
         <button class="delete-btn" title="Delete">✖</button>
       `;
 
@@ -96,10 +116,9 @@ document.addEventListener('DOMContentLoaded', () => {
   const categorySums = {};
 
   expenses.forEach(t => {
-    const title = t.title.toLowerCase();
-    const matchedCategory = categoryMap[title] || "Others";
+    const category = t.category ? t.category.trim() : "Others";
 
-    categorySums[matchedCategory] = (categorySums[matchedCategory] || 0) + Math.abs(t.amount);
+    categorySums[category] = (categorySums[category] || 0) + Math.abs(t.amount);
   });
 
   const categories = Object.keys(categorySums);

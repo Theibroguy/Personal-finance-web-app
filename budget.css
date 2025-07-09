@@ -9,7 +9,7 @@ body {
   display: flex;
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background-color:#f0f2f5;
+  background: color #121212;;
   color: #333;
 }
 
@@ -66,12 +66,16 @@ body {
 /* Main content */
 .wrapper {
   display: flex;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
 .main-content {
   flex: 1;
   padding: 20px;
   overflow-y: auto;
+  transition: margin-left 0.3s ease;
 }
 
 .sidebar.collapsed ~ .main-content {
@@ -161,4 +165,19 @@ header h1 {
 #spendingChart {
   width: 100%;
   height: auto;
+}
+
+.progress-container {
+  width: 100%;
+  height: 10px;
+  background-color: #ccc;
+  border-radius: 6px;
+  margin: 8px 0;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  transition: width 0.4s ease;
+  border-radius: 6px;
 }

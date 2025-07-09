@@ -111,6 +111,7 @@ body {
 .transaction-list {
   list-style: none;
   padding: 0;
+  width: 100%;
 }
 
 .transaction-list h3 {
