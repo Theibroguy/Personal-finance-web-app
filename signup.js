@@ -26,6 +26,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Proceed with signup
     alert("Sign up successful");
     // Redirect or save data here
+    setTimeout(() => {
+      window.location.href = "Dashboard.html";
+    }, 1000);
   });
 });
 
