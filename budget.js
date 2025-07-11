@@ -115,6 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
       Clothes: '#36A2EB',
       Utilities: '#FFCE56',
       Communication: '#8E44AD',
+      Health: '#FF0000',
       Others: '#E67E22'
     };
 
