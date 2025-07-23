@@ -3,6 +3,8 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/auth');
+
+// Load environment variables
 require('dotenv').config();
 
 const app = express();

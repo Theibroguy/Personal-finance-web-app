@@ -4,10 +4,10 @@ const bcrypt = require('bcryptjs');
 const User = require('../models/userModel');
 
 // POST / signup
-router.post('/signup.js', async (req, res) => {
-  try {
-    const {username, email, password} = req.body;
+router.post('/signup', async (req, res) => {
+  const {username, email, password} = req.body;
 
+  try {
     // Checks if user alredy exists
     const existingUser = await User.findOne({ email });
     if (existingUser) {
