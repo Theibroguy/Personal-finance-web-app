@@ -33,4 +33,24 @@ router.post('/signup', async (req, res) => {
   }
 });
 
+// POST /login
+router.post('/login', async (req, res) => {
+  const {email, password} = req.body;
+
+  try {
+    // Checks if user exists
+    const user = await User.findOne({ email });
+    if (!user) return res.status(400).json({ message: 'Invalid email or password'});
+
+    // Compare password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) return res.status(400).json({ message: 'Invalid email or password'});
+
+    res.status(200).json({ message: 'Login successful' });
+  } catch (error) {
+    console.error('Lgin error', error);
+    res.status(500).json({ message: 'Server error during login' });
+  }
+});
+
 module.exports = router;
