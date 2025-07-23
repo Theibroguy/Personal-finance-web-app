@@ -17,18 +17,40 @@ document.addEventListener('DOMContentLoaded', () => {
     matchText.textContent = confirmInput.value === passwordInput.value ? 'Passwords match ✅' : 'Passwords do not match ❌';
   });
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
     if (passwordInput.value !== confirmInput.value) {
       alert('Passwords do not match!');
       return;
     }
-    // Proceed with signup
-    alert("Sign up successful");
-    // Redirect or save data here
-    setTimeout(() => {
-      window.location.href = "Dashboard.html";
-    }, 1000);
+
+    const newUser = {
+      username: document.getElementById('username').value,
+      email: document.getElementById('email').value,
+      password: passwordInput.value,
+    };
+
+    try {
+      const res = await fetch('http://localhost:5000/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newUser),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        alert(data.message || "Signup successful!");
+        window.location.href = 'login.html';
+      } else {
+        alert(data.message || "Sign up failed.");
+      }
+    } catch (error) {
+      console.error("Error during signup:", error);
+      alert("Something went wrong. Please try again later.");
+    }
   });
 });
 
