@@ -75,4 +75,33 @@ router.put('/update-profile', async (req, res) => {
   }
 });
 
+// PUT /update-password
+router.put('/update-password', async (req, res) => {
+  const { email, currentPassword, newPassword } = req.body;
+
+  try {
+    // Find user
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Check current password
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Current password is incorrect' });
+    }
+
+    // Take new password and update
+    const hashed = await bcrypt.hash(newPassword, 10);
+    user.password = hashed;
+    await user.save();
+
+    res.json({ message: 'Password updated successfully' });
+  } catch (err) {
+    console.error('Update password error:', err);
+    res.status(500).json({ message: 'Server error during password update' });
+  }
+});
+
 module.exports = router;
