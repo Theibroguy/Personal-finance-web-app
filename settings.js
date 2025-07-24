@@ -45,4 +45,66 @@ document.addEventListener('DOMContentLoaded', async () => {
       status.textContent = 'Network error. Try again.';
     }
   });
+
+  // PASSWORD FORM
+  const passwordForm = document.getElementById('password-form');
+  const passwordStatus = document.getElementById('password-status');
+
+  passwordForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const currentPassword = document.getElementById('current-password').value;
+    const newPassword = document.getElementById('new-password').value;
+    const confirmPassword = document.getElementById('confirm-password').value;
+    const email = JSON.parse(localStorage.getItem('user')).email;
+
+    if (newPassword !== confirmPassword) {
+      passwordStatus.textContent = "New passwords do not match ❌";
+      passwordStatus.style.color = "red";
+      return;
+    }
+
+    try {
+      const res =await fetch('http://localhost:5000/api/auth/update-password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type' : 'application/json',
+        },
+        body: JSON.stringify({ email, currentPassword, newPassword }),
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        passwordStatus.textContent = 'Password updated successfully ✅';
+        passwordStatus.style.color = "green";
+        passwordForm.reset();
+      } else {
+        passwordStatus.textContent = data.message || 'Error updating password';
+        passwordStatus.style.color = "red";
+      }
+    } catch (err) {
+      console.error('Password update error:', err);
+      passwordStatus.textContent = 'Something went wrong please try again.';
+      passwordStatus.style.color = "red";
+    }
+  });
 });
+
+
+// Toggle show/hide password
+function togglePassword(inputType, el) {
+  const input = el.previousElementSibling;
+  const [showIcon, hideIcon] = el.querySelectorAll('svg');
+
+  if (input.type === 'password') {
+    input.type = 'text';
+    showIcon.style.display = 'none';
+    hideIcon.style.display = 'inline';
+
+  } else {
+    input.type = 'password';
+    showIcon.style.display = 'inline';
+    hideIcon.style.display = 'none';
+  }
+}
