@@ -97,3 +97,21 @@ hr {
   margin-top: 4px;
   font-weight: bold;
 }
+
+.password-strength-container {
+  margin-top: 8px;
+}
+
+#password-strength-bar {
+  height: 8px;
+  width: 0%;
+  background-color: red;
+  border-radius: 10px;
+  transition: width 0.3s ease, background-color 0.3s ease;
+  margin-bottom: 6px;
+}
+
+#password-strength-text {
+  font-size: 0.9rem;
+  color: #444;
+}

@@ -90,18 +90,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Password strength check
+  // Password strength progress bar
   const newPasswordInput = document.getElementById('new-password');
-  const strengthText = document.getElementById('password-strength');
+  const strengthBar = document.getElementById('password-strength-bar');
+  const strengthText = document.getElementById('password-strength-text');
 
   newPasswordInput.addEventListener('input', () => {
-    const value = newPasswordInput.value;
-    const strength = getPasswordStrength(value);
+    const password = newPasswordInput.value;
+    const strength = getPasswordStrength(password);
 
+    // Update bar width and color
+    strengthBar.style.width = `${strength.percent}%`;
+    strengthBar.style.backgroundColor = strength.color;
+
+    // Update stregth label
     strengthText.textContent = `Strength: ${strength.label}`;
-    strengthText.style.color = strength.color;
   });
 
+  // Sterngth logic
   function getPasswordStrength(password) {
     let score = 0;
     if (password.length >= 8) score++;
@@ -109,9 +115,10 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (/[0-9]/.test(password)) score++;
     if (/[\W]/.test(password)) score++;
 
-    if (score <= 1) return { label: 'Weak', color: 'red' };
-    if (score === 2) return { label: 'Medium', color: 'orange'};
-    return { label: 'Strong', color: 'lightgreen' };
+    if (score <= 1) return { label: 'Weak', percent: 25, color: 'red' };
+    if (score === 2) return { label: 'Medium', percent: 50, color: 'orange'};
+    if (score === 3) return { label: 'Strong', percent: 75, color: 'lightgreen' };
+    return { label: 'Very Strong', percent: 100, color: 'green'};
   }
 });
 
