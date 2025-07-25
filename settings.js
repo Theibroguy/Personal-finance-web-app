@@ -58,6 +58,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     const confirmPassword = document.getElementById('confirm-password').value;
     const email = JSON.parse(localStorage.getItem('user')).email;
 
+    const strength = getPasswordStrength(newPassword);
+
+    if (strength.percent <= 50) {
+      passwordStatus.textContent = "Password is too weak. Try making it stronger 🔐";
+      passwordStatus.style.color = "red";
+      return;
+    }
+
     if (newPassword !== confirmPassword) {
       passwordStatus.textContent = "New passwords do not match ❌";
       passwordStatus.style.color = "red";
@@ -79,6 +87,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         passwordStatus.textContent = 'Password updated successfully ✅';
         passwordStatus.style.color = "green";
         passwordForm.reset();
+        strengthBar.style.width = '0%'; // This resets strength bar
+        strengthText.textContent = '';
       } else {
         passwordStatus.textContent = data.message || 'Error updating password';
         passwordStatus.style.color = "red";
