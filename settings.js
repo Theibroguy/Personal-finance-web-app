@@ -89,6 +89,30 @@ document.addEventListener('DOMContentLoaded', async () => {
       passwordStatus.style.color = "red";
     }
   });
+
+  // Password strength check
+  const newPasswordInput = document.getElementById('new-password');
+  const strengthText = document.getElementById('password-strength');
+
+  newPasswordInput.addEventListener('input', () => {
+    const value = newPasswordInput.value;
+    const strength = getPasswordStrength(value);
+
+    strengthText.textContent = `Strength: ${strength.label}`;
+    strengthText.style.color = strength.color;
+  });
+
+  function getPasswordStrength(password) {
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[\W]/.test(password)) score++;
+
+    if (score <= 1) return { label: 'Weak', color: 'red' };
+    if (score === 2) return { label: 'Medium', color: 'orange'};
+    return { label: 'Strong', color: 'lightgreen' };
+  }
 });
 
 

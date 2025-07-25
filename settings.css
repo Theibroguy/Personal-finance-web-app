@@ -91,3 +91,9 @@ hr {
 .eye-icon.show {
   display: inline;
 }
+
+.strength-text {
+  font-size: 0.9 rem;
+  margin-top: 4px;
+  font-weight: bold;
+}
