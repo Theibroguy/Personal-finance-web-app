@@ -117,7 +117,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     strengthText.textContent = `Strength: ${strength.label}`;
   });
 
-  // Sterngth logic
+  // Strength logic
   function getPasswordStrength(password) {
     let score = 0;
     if (password.length >= 8) score++;

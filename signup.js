@@ -1,17 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
   const passwordInput = document.getElementById('password');
   const confirmInput = document.getElementById('confirm-password');
-  const strengthText = document.getElementById('strength-text');
   const matchText = document.getElementById('match-text');
   const form = document.getElementById('signup-form');
-
-  passwordInput.addEventListener('input', () => {
-    const value = passwordInput.value;
-    const strength = getPasswordStrength(value);
-
-    strengthText.textContent = `Strength: ${strength.label}`;
-    strengthText.style.color = strength.color;
-  });
 
   confirmInput.addEventListener('input', () => {
     matchText.textContent = confirmInput.value === passwordInput.value ? 'Passwords match ✅' : 'Passwords do not match ❌';
@@ -52,19 +43,39 @@ document.addEventListener('DOMContentLoaded', () => {
       alert("Something went wrong. Please try again later.");
     }
   });
+
+  // Password strength progress bar
+  const newPasswordInput = document.getElementById('password');
+  const strengthBar = document.getElementById('password-strength-bar');
+  const strengthText = document.getElementById('password-strength-text');
+
+  newPasswordInput.addEventListener('input', () => {
+    const password = newPasswordInput.value;
+    const strength = getPasswordStrength(password);
+
+    // Update bar width and color
+    strengthBar.style.width = `${strength.percent}%`;
+    strengthBar.style.backgroundColor = strength.color;
+
+    // Update stregth label
+    strengthText.textContent = `Strength: ${strength.label}`;
+  });
+
+  // Strength logic
+  function getPasswordStrength(password) {
+    let score = 0;
+    if (password.length >= 8) score++;
+    if (/[A-Z]/.test(password)) score++;
+    if (/[0-9]/.test(password)) score++;
+    if (/[\W]/.test(password)) score++;
+
+    if (score <= 1) return { label: 'Weak', percent: 25, color: 'red' };
+    if (score === 2) return { label: 'Medium', percent: 50, color: 'orange'};
+    if (score === 3) return { label: 'Strong', percent: 75, color: 'lightgreen' };
+    return { label: 'Very Strong', percent: 100, color: 'green'};
+  }
 });
 
-function getPasswordStrength(password) {
-  let score = 0;
-  if (password.length >= 8) score++;
-  if (/[A-Z]/.test(password)) score++;
-  if (/[0-9]/.test(password)) score++;
-  if (/[\W]/.test(password)) score++;
-
-  if (score <= 1) return {label: 'Weak', color: 'red' };
-  if (score === 2) return {label: 'Medium', color: 'orange' };
-  return {label: 'Strong', color: 'lightgreen' };
-}
 
 function togglePassword(id, el) {
   const input = document.getElementById(id);
