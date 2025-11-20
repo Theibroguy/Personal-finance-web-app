@@ -24,8 +24,9 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
 
       if (response.ok) {
-        alert(data.message || 'Login successfull');
-        localStorage.setItem('user', JSON.stringify({ email }));
+        alert(data.message || 'Login successful');
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
         window.location.href = 'Dashboard.html';
       } else {
         alert(data.message || 'Invalid login credentials');

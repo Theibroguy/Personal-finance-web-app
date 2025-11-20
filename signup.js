@@ -34,7 +34,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (res.ok) {
         alert(data.message || "Signup successful!");
-        window.location.href = 'login.html';
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('user', JSON.stringify(data.user));
+        window.location.href = 'Dashboard.html';
       } else {
         alert(data.message || "Sign up failed.");
       }
@@ -70,9 +72,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (/[\W]/.test(password)) score++;
 
     if (score <= 1) return { label: 'Weak', percent: 25, color: 'red' };
-    if (score === 2) return { label: 'Medium', percent: 50, color: 'orange'};
+    if (score === 2) return { label: 'Medium', percent: 50, color: 'orange' };
     if (score === 3) return { label: 'Strong', percent: 75, color: 'lightgreen' };
-    return { label: 'Very Strong', percent: 100, color: 'green'};
+    return { label: 'Very Strong', percent: 100, color: 'green' };
   }
 });
 

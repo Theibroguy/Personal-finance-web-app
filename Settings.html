@@ -74,6 +74,28 @@
   </form>
   <p id="password-status"></p>
 
+  <hr />
+  <div class="notification-preferences">
+    <h3>Notification Preferences</h3>
+    <form id="notification-form">
+      <div class="checkbox-form-group checkbox-group">
+        <label for="email-notifications">Enable Email Notifications</label>
+        <input type="checkbox" id="email-notifications" />
+      </div>
+      
+      <div class="form-group">
+        <label for="report-frequency">Report Frequency:</label>
+        <select id="report-frequency">
+          <option value="daily">Daily</option>
+          <option value="weekly">weekly</option>
+          <option value="monthly">Monthly</option>
+        </select>
+      </div>
+      <button type="submit">Save Preferences</button>
+      <p id="notification-status"></p>
+    </form>
+  </div>
+
   <script src="settings.js"></script>
 </body>
 </html>

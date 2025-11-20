@@ -149,3 +149,63 @@ function togglePassword(inputType, el) {
     hideIcon.style.display = 'none';
   }
 }
+
+// Notification preference logic
+const notifForm = document.getElementById('notification-form');
+const emailCheckbox = document.getElementById('email-notifications');
+const frequencySelect = document.getElementById('report-frequency');
+const notifStatus = document.getElementById('notification-status');
+
+const userData = JSON.parse(localStorage.getItem('user'));
+
+// Load existing preferences from backend 
+async function loadPreferences() {
+  try {
+    const res = await fetch(`http://localhost:5000/api/user/preferences?email=${userData.email}`);
+    const data = await res.json();
+    if (res.ok && data.preferences) {
+      emailCheckbox.checked = data.preferences.email;
+      frequencySelect.value = data.preferences.frequency;
+    }
+  } catch {
+    console.error('Failed to load preferences', err);
+  }
+}
+
+loadPreferences();
+
+// Save preferences from backend
+notifForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const prefs = {
+    email: emailCheckbox.checked,
+    frequency: frequencySelect.value
+  };
+
+  try {
+    const res = await fetch('http://localhost:5000/api/user/preferences', {
+      method: 'PUT',
+      headers: {
+        'Content-Type' : 'application/json'
+      },
+      body: JSON.stringify({
+        email: userData.email,
+        preferences: prefs
+      })
+    });
+
+    const data = await res.json();
+    
+    if (res.ok) {
+      notifStatus.textContent = "Preferences updated successfully ✅";
+      notifStatus.style.color = "green";
+    } else {
+      notifStatus.textContent = data.message || "Failed to update preferences ❌";
+      notifStatus.style.color = "red";
+    }
+  } catch (err) {
+    console.error("Error updating preferences:", err);
+    notifStatus.style.color = "red";
+  }
+});

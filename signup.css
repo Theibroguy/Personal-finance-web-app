@@ -172,6 +172,7 @@ button[type="submit"] {
   outline: none;
   cursor: pointer;
   transition: background 0.3s ease;
+  margin-top: 10px;
 }
 
 button[type="submit"]:hover {

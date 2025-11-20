@@ -1,5 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
-  let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = 'login.html';
+    return;
+  }
 
   const categoryColors = {
     Food: '#4CAF50',
@@ -10,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     Health: '#FF0000',
     Others: '#E67E22'
   };
+
   const form = document.getElementById('transaction-form');
   const titleInput = document.getElementById('title');
   const amountInput = document.getElementById('amount');
@@ -28,57 +33,87 @@ document.addEventListener('DOMContentLoaded', () => {
     sidebar.classList.toggle('collapsed');
   });
 
-  function saveTransaction() {
-    localStorage.setItem('transactions', JSON.stringify(transactions));
+  let transactions = [];
+
+  async function fetchTransactions() {
+    try {
+      const res = await fetch('http://localhost:5000/api/transactions', {
+        headers: { 'x-auth-token': token }
+      });
+      const data = await res.json();
+      transactions = data;
+      displayTransactions();
+      updateSummary();
+    } catch (err) {
+      console.error('Error fetching transactions:', err);
+    }
   }
 
   function displayTransactions() {
-  transactionList.innerHTML = '';
+    transactionList.innerHTML = '';
 
-  transactions.forEach(transaction => {
-    const li = document.createElement('li');
-    li.className = transaction.amount < 0 ? 'expense' : 'income';
+    transactions.forEach(transaction => {
+      const li = document.createElement('li');
+      li.className = transaction.type === 'expense' ? 'expense' : 'income';
 
-    const formattedAmount = Math.abs(transaction.amount)
-      .toFixed(2)
-      .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      const formattedAmount = Math.abs(transaction.amount)
+        .toFixed(2)
+        .replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-    const category = transaction.category || "Others";
-    const color = categoryColors[category] || '#999';
+      const category = transaction.category || "Others";
+      const color = categoryColors[category] || '#999';
 
-    li.innerHTML = `
-      <span style = "color: ${color}; font-weight: 600;">
-        ${transaction.title} (${category})
-      </span> - ₦${formattedAmount}
-      <button class = "delete-btn">✖</button>
-    `;
+      li.innerHTML = `
+        <span style = "color: ${color}; font-weight: 600;">
+          ${transaction.title} (${category})
+        </span> - ₦${formattedAmount}
+        <button class = "delete-btn" data-id="${transaction._id}">✖</button>
+      `;
 
-    li.querySelector('.delete-btn').addEventListener('click', () => {
-      deleteTransaction(transaction.id);
+      li.querySelector('.delete-btn').addEventListener('click', (e) => {
+        deleteTransaction(e.target.dataset.id);
+      });
+
+      transactionList.appendChild(li);
     });
+  }
 
-    transactionList.appendChild(li);
-  });
-}
+  async function deleteTransaction(id) {
+    if (!confirm('Are you sure?')) return;
 
-  function deleteTransaction(id) {
-    transactions = transactions.filter(t => t.id !== id);
-    saveTransaction();
-    displayTransactions();
-    updateSummary();
+    try {
+      const res = await fetch(`http://localhost:5000/api/transactions/${id}`, {
+        method: 'DELETE',
+        headers: { 'x-auth-token': token }
+      });
+
+      if (res.ok) {
+        transactions = transactions.filter(t => t._id !== id);
+        displayTransactions();
+        updateSummary();
+      }
+    } catch (err) {
+      console.error('Error deleting transaction:', err);
+    }
   }
 
   function updateSummary() {
-    const income = transactions.filter(t => t.amount > 0).reduce((acc, t) => acc + t.amount, 0);
-    const expense = transactions.filter(t => t.amount < 0).reduce((acc, t) => acc + t.amount, 0);
-    const balance = income + expense;
+    const income = transactions
+      .filter(t => t.type === 'income')
+      .reduce((acc, t) => acc + t.amount, 0);
+
+    const expense = transactions
+      .filter(t => t.type === 'expense')
+      .reduce((acc, t) => acc + t.amount, 0);
+
+    const balance = income - expense;
 
     incomeDisplay.textContent = `Income: ₦${income.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
-    expenseDisplay.textContent = `Expense: ₦${Math.abs(expense).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
+    expenseDisplay.textContent = `Expense: ₦${expense.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
     balanceDisplay.textContent = `Balance: ₦${balance.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`;
   }
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     const title = titleInput.value.trim();
@@ -92,19 +127,32 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const newTransaction = {
-      id: Date.now(),
       title,
-      amount: type === 'expense' ? -Math.abs(amount) : Math.abs(amount), category
+      amount,
+      type,
+      category
     };
 
-    transactions.push(newTransaction);
-    saveTransaction();
-    displayTransactions();
-    updateSummary();
-    form.reset();
+    try {
+      const res = await fetch('http://localhost:5000/api/transactions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token
+        },
+        body: JSON.stringify(newTransaction)
+      });
+
+      const data = await res.json();
+      transactions.unshift(data);
+      displayTransactions();
+      updateSummary();
+      form.reset();
+    } catch (err) {
+      console.error('Error adding transaction:', err);
+    }
   });
 
   // Initialize
-  displayTransactions();
-  updateSummary();
+  fetchTransactions();
 });
