@@ -1,101 +1,206 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Settings - profile Info</title>
+  <title>SpendSense | Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="settings.css">
 </head>
+
 <body>
-  <div class="settings-container">
-    <h2>User Settings</h2>
-    <form id="profile-form">
-      <div class="form-group">
-        <label for="username">Username</label>
-        <input type="text" id="username" required />
-      </div>
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" required />
-      </div>
-      <button type="submit">Update Profile</button>
-    </form>
-    <p id="status-message"></p>
+  <div class="background-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
   </div>
 
-  <hr />
-  <h3>Update Password</h3>
-  <form id="password-form">
-    <div class="form-group">
-      <label for="current-password">Current Password</label>
-      <input type="password" id="current-password" required />
-        <span class="toggle-password" onclick="togglePassword('password', this)">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="eye-icon show">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                </svg>
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="eye-icon hide">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-                </svg>
-              </span>
-    </div>
-    <div class="form-group">
-      <label for="new-password">New Password</label>
-      <input type="password" id="new-password" required />
-        <span class="toggle-password" onclick="togglePassword('password', this)">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="eye-icon show">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                  </svg>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="eye-icon hide">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-                  </svg>
-                </span>
+  <div class="wrapper">
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fa-solid fa-wallet"></i>
+          <span>SpendSense</span>
+        </div>
+        <button id="toggle-btn" class="toggle-btn" title="Toggle Sidebar">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+      <nav>
+        <ul>
+          <li>
+            <a href="Dashboard.html">
+              <i class="fa-solid fa-chart-pie"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li>
+            <a href="Transaction-history.html">
+              <i class="fa-solid fa-list"></i>
+              <span>History</span>
+            </a>
+          </li>
+          <li>
+            <a href="Budget.html">
+              <i class="fa-solid fa-piggy-bank"></i>
+              <span>Budget</span>
+            </a>
+          </li>
+          <li class="active">
+            <a href="Settings.html">
+              <i class="fa-solid fa-gear"></i>
+              <span>Settings</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <a href="#" class="logout-link">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </a>
+      </div>
+    </aside>
+
+    <div class="main-panel">
+      <header class="top-bar">
+        <h1>Settings</h1>
+        <div class="user-profile">
+          <span>Welcome Back</span>
+          <div class="avatar"><i class="fa-solid fa-user"></i></div>
+        </div>
+      </header>
+
+      <main class="main-content">
+        <div class="settings-grid">
+
+          <!-- Appearance Section -->
+          <section class="settings-card appearance-section">
+            <h2><i class="fa-solid fa-palette"></i> Appearance</h2>
+            <div class="setting-item">
+              <div class="setting-info">
+                <h3>Dark Mode</h3>
+                <p>Switch between light and dark themes</p>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="theme-toggle" checked>
+                <span class="slider round"></span>
+              </label>
+            </div>
+          </section>
+
+          <!-- Profile Section -->
+          <section class="settings-card profile-section">
+            <h2><i class="fa-solid fa-user-pen"></i> Profile Information</h2>
+            <form id="profile-form">
+              <div class="form-group">
+                <label for="username">Username</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-user"></i>
+                  <input type="text" id="username" required />
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-envelope"></i>
+                  <input type="email" id="email" required />
+                </div>
+              </div>
+              <button type="submit" class="submit-btn primary-btn">Update Profile</button>
+            </form>
+            <p id="status-message" class="status-msg"></p>
+          </section>
+
+          <!-- Security Section -->
+          <section class="settings-card security-section">
+            <h2><i class="fa-solid fa-lock"></i> Security</h2>
+            <form id="password-form">
+              <div class="form-group">
+                <label for="current-password">Current Password</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-key"></i>
+                  <input type="password" id="current-password" required />
+                  <span class="toggle-password" onclick="togglePassword(this)">
+                    <i class="fa-solid fa-eye show"></i>
+                    <i class="fa-solid fa-eye-slash hide" style="display: none;"></i>
+                  </span>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="new-password">New Password</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-lock"></i>
+                  <input type="password" id="new-password" required />
+                  <span class="toggle-password" onclick="togglePassword(this)">
+                    <i class="fa-solid fa-eye show"></i>
+                    <i class="fa-solid fa-eye-slash hide" style="display: none;"></i>
+                  </span>
+                </div>
                 <div class="password-strength-container">
                   <div id="password-strength-bar"></div>
-                  <span id="password-strength-text">Strength: </span>
+                  <span id="password-strength-text"></span>
                 </div>
-    </div>
-    <div class="form-group">
-      <label for="confirm-password">Confirm Password</label>
-      <input type="password" id="confirm-password" required />
-        <span class="toggle-password" onclick="togglePassword('password', this)">
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="eye-icon show">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                  </svg>
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="eye-icon hide">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-                  </svg>
-                </span>
-                <p id="password-strength" class="strength-text"></p>
-    </div>
-    <button type="submit">Change Password</button>
-  </form>
-  <p id="password-status"></p>
+              </div>
+              <div class="form-group">
+                <label for="confirm-password">Confirm Password</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-check-double"></i>
+                  <input type="password" id="confirm-password" required />
+                  <span class="toggle-password" onclick="togglePassword(this)">
+                    <i class="fa-solid fa-eye show"></i>
+                    <i class="fa-solid fa-eye-slash hide" style="display: none;"></i>
+                  </span>
+                </div>
+              </div>
+              <button type="submit" class="submit-btn danger-btn">Change Password</button>
+            </form>
+            <p id="password-status" class="status-msg"></p>
+          </section>
 
-  <hr />
-  <div class="notification-preferences">
-    <h3>Notification Preferences</h3>
-    <form id="notification-form">
-      <div class="checkbox-form-group checkbox-group">
-        <label for="email-notifications">Enable Email Notifications</label>
-        <input type="checkbox" id="email-notifications" />
-      </div>
-      
-      <div class="form-group">
-        <label for="report-frequency">Report Frequency:</label>
-        <select id="report-frequency">
-          <option value="daily">Daily</option>
-          <option value="weekly">weekly</option>
-          <option value="monthly">Monthly</option>
-        </select>
-      </div>
-      <button type="submit">Save Preferences</button>
-      <p id="notification-status"></p>
-    </form>
+          <!-- Notifications Section -->
+          <section class="settings-card notification-section">
+            <h2><i class="fa-solid fa-bell"></i> Notifications</h2>
+            <form id="notification-form">
+              <div class="setting-item">
+                <div class="setting-info">
+                  <h3>Email Notifications</h3>
+                  <p>Receive updates and reports via email</p>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" id="email-notifications">
+                  <span class="slider round"></span>
+                </label>
+              </div>
+
+              <div class="form-group mt-4">
+                <label for="report-frequency">Report Frequency</label>
+                <div class="input-wrapper">
+                  <i class="fa-solid fa-calendar-days"></i>
+                  <select id="report-frequency">
+                    <option value="daily">Daily</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="monthly">Monthly</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="submit-btn secondary-btn">Save Preferences</button>
+              <p id="notification-status" class="status-msg"></p>
+            </form>
+          </section>
+
+        </div>
+      </main>
+    </div>
   </div>
 
   <script src="settings.js"></script>
 </body>
+
 </html>
