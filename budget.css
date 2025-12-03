@@ -167,9 +167,9 @@ body {
   color: var(--text-light);
 }
 
-.sidebar.collapsed .toggle-btn {
+/* .sidebar.collapsed .toggle-btn {
   display: none;
-}
+} */
 
 .sidebar nav ul {
   list-style: none;

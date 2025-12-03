@@ -45,11 +45,16 @@ document.addEventListener('DOMContentLoaded', async () => {
     return;
   }
 
-  // Pre-fill profile form
+  // Pre-fill profile form and welcome message
   const emailInput = document.getElementById('email');
   const usernameInput = document.getElementById('username');
-  if (emailInput) emailInput.value = user.email;
-  if (usernameInput) usernameInput.value = user.username || '';
+  const welcomeMessage = document.getElementById('welcome-message');
+
+  if (user) {
+    if (emailInput) emailInput.value = user.email || '';
+    if (usernameInput) usernameInput.value = user.username || '';
+    if (welcomeMessage) welcomeMessage.textContent = `Welcome Back, ${user.username || 'User'}`;
+  }
 
   // Profile Update
   if (profileForm) {
@@ -75,7 +80,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (res.ok) {
           statusMessage.textContent = 'Profile updated successfully!';
           statusMessage.style.color = 'var(--success)';
-          localStorage.setItem('user', JSON.stringify(updatedUser));
+          // Update local storage and welcome message
+          const newUser = { ...user, ...updatedUser };
+          localStorage.setItem('user', JSON.stringify(newUser));
+          if (welcomeMessage) welcomeMessage.textContent = `Welcome Back, ${newUser.username || 'User'}`;
         } else {
           statusMessage.textContent = data.message || 'Error updating profile';
           statusMessage.style.color = 'var(--danger)';
