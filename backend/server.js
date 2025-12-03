@@ -24,12 +24,22 @@ app.use(express.static(path.join(__dirname, '../')));
 // MongoDB connection
 console.log('Attempting to connect to MongoDB at:', process.env.MONGO_URI);
 
-mongoose.connect(process.env.MONGO_URI)
+// Use 127.0.0.1 instead of localhost to avoid IPv6 issues
+const mongoURI = process.env.MONGO_URI.replace('localhost', '127.0.0.1');
+
+mongoose.connect(mongoURI, {
+  serverSelectionTimeoutMS: 5000 // Timeout after 5s instead of 30s
+})
   .then(() => {
     console.log('MongoDB connected');
-    app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+    startServer();
   })
   .catch((err) => {
     console.error('MongoDB connection failed:', err);
-    process.exit(1);
+    console.log('Starting server without database connection for debugging...');
+    startServer();
   });
+
+function startServer() {
+  app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+}

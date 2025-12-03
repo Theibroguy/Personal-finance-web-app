@@ -3,7 +3,39 @@ document.addEventListener('DOMContentLoaded', function () {
   const filterSelect = document.getElementById('filter');
   const dateSearch = document.getElementById('date-search');
 
-  const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+  let transactions = [];
+
+  async function fetchTransactions() {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      window.location.href = 'Login.html';
+      return;
+    }
+
+    try {
+      const response = await fetch('http://localhost:5000/api/transactions', {
+        headers: {
+          'x-auth-token': token
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          window.location.href = 'Login.html';
+          return;
+        }
+        throw new Error('Failed to fetch transactions');
+      }
+
+      transactions = await response.json();
+      renderTransactions();
+    } catch (error) {
+      console.error('Error fetching transactions:', error);
+      transactionList.innerHTML = '<li>Error loading transactions. Please try again later.</li>';
+    }
+  }
 
 
   function renderTransactions(filter = 'all', date = '') {
@@ -47,7 +79,7 @@ document.addEventListener('DOMContentLoaded', function () {
       grouped[date].forEach(transaction => {
         const li = document.createElement('li');
         const formattedAmount = Math.abs(transaction.amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        li.textContent = `${transaction.title}: ₦${formattedAmount}`;  
+        li.textContent = `${transaction.title}: ₦${formattedAmount}`;
         li.classList.add(transaction.amount < 0 ? 'expense' : 'income');
         li.style.color = transaction.amount < 0 ? 'red' : 'green';
         transactionList.appendChild(li);
@@ -55,10 +87,10 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   }
 
-   
+
 
   // on load
-  renderTransactions();
+  fetchTransactions();
 
   // On filter change
   filterSelect.addEventListener('change', () => {
@@ -76,8 +108,8 @@ document.addEventListener('DOMContentLoaded', function () {
 const toggleBtn = document.getElementById('toggle-btn');
 const sidebar = document.getElementById('sidebar');
 
-  if (toggleBtn && sidebar) {
-    toggleBtn.addEventListener('click', function () {
-      sidebar.classList.toggle('collapsed');
-    });
-  }
+if (toggleBtn && sidebar) {
+  toggleBtn.addEventListener('click', function () {
+    sidebar.classList.toggle('collapsed');
+  });
+}
