@@ -7,13 +7,13 @@ document.addEventListener('DOMContentLoaded', () => {
   const sidebar = document.getElementById('sidebar');
 
   let budgets = JSON.parse(localStorage.getItem('budgets')) || [];
-  let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
 
   // Sidebar toggle functionality
-  toggleBtn.addEventListener('click', () => {
-    sidebar.classList.toggle('collapsed');
-    document.querySelector('.main-content').classList.toggle('collapsed');
-  });
+  if (toggleBtn && sidebar) {
+    toggleBtn.addEventListener('click', () => {
+      sidebar.classList.toggle('collapsed');
+    });
+  }
 
   function saveBudgets() {
     localStorage.setItem('budgets', JSON.stringify(budgets));
@@ -23,55 +23,83 @@ document.addEventListener('DOMContentLoaded', () => {
     return parseFloat(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
   }
 
-  function renderBudgets() {
+  async function fetchTransactions() {
+    const token = localStorage.getItem('token');
+    if (!token) return [];
+
+    try {
+      const res = await fetch('http://localhost:5000/api/transactions', {
+        headers: { 'x-auth-token': token }
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (err) {
+      console.error('Error fetching transactions:', err);
+    }
+    return [];
+  }
+
+  async function renderBudgets() {
     budgetList.innerHTML = '';
 
     if (budgets.length === 0) {
-      budgetList.innerHTML = '<li>No budgets set yet.</li>';
+      budgetList.innerHTML = '<li style="color: var(--text-gray); border: none; background: transparent;">No budgets set yet.</li>';
+      updateChart([]);
       return;
     }
 
-    const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
+    const transactions = await fetchTransactions();
 
     budgets.forEach((budget, index) => {
       const budgetCategory = budget.category.toLowerCase();
 
       const spent = transactions
-        .filter(t => t.amount < 0 && t.category?.toLowerCase() === budgetCategory)
+        .filter(t => t.type === 'expense' && (t.category?.toLowerCase() === budgetCategory || (budgetCategory === 'others' && !t.category)))
         .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
       const percentageUsed = Math.min((spent / budget.amount) * 100, 100).toFixed(1);
 
-      let barColor = '#4CAF50'; // green
+      let barColor = 'var(--success)'; // green
       if (spent > budget.amount) {
-        barColor = '#E74C3C'; // red
+        barColor = 'var(--danger)'; // red
       } else if (percentageUsed >= 80) {
-        barColor = '#F39C12'; // yellow
+        barColor = 'var(--warning)'; // yellow
       }
 
       const li = document.createElement('li');
       li.innerHTML = `
-        <div><strong>${budget.category}</strong> - ₦${formatAmount(spent)} spent out of ₦${formatAmount(budget.amount)}</div>
-        <div class="progress-container">
-          <div class="progress-bar" data-width = "${percentageUsed}" style = "background-color: ${barColor};"></div>
+        <div class="budget-header">
+          <span class="budget-category">${budget.category}</span>
+          <button class="delete-btn" title="Delete"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <button class="delete-btn" title="Delete">✖</button>
+        <div class="budget-info">
+          <span>₦${formatAmount(spent)} spent</span>
+          <span>of ₦${formatAmount(budget.amount)}</span>
+        </div>
+        <div class="progress-container">
+          <div class="progress-bar" data-width="${percentageUsed}" style="background-color: ${barColor}; width: 0%"></div>
+        </div>
       `;
 
       li.querySelector('.delete-btn').addEventListener('click', () => {
-        budgets.splice(index, 1);
-        saveBudgets();
-        renderBudgets();
-        updateChart();
+        if (confirm('Delete this budget?')) {
+          budgets.splice(index, 1);
+          saveBudgets();
+          renderBudgets();
+        }
       });
 
       budgetList.appendChild(li);
 
-      const progressBar = li.querySelector('.progress-bar');
-      setTimeout (() => {
-        progressBar.style.width = progressBar.dataset.width + '%';
+      // Animate progress bar
+      setTimeout(() => {
+        const progressBar = li.querySelector('.progress-bar');
+        if (progressBar) progressBar.style.width = `${percentageUsed}%`;
       }, 100);
     });
+
+    updateChart(transactions);
   }
 
   form.addEventListener('submit', (e) => {
@@ -88,24 +116,21 @@ document.addEventListener('DOMContentLoaded', () => {
     budgets.push({ category, amount });
     saveBudgets();
     renderBudgets();
-    updateChart();
     form.reset();
   });
 
-  function updateChart() {
+  function updateChart(transactions) {
     const canvas = document.getElementById('spendingChart');
     if (!canvas) return;
 
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const transactions = JSON.parse(localStorage.getItem('transactions')) || [];
-
     const categorySums = {};
     transactions
-      .filter(t => t.amount < 0)
+      .filter(t => t.type === 'expense')
       .forEach(t => {
-        const category = t.category ? t.category.trim() : "Others";
+        const category = t.category ? t.category : "Others";
         categorySums[category] = (categorySums[category] || 0) + Math.abs(t.amount);
       });
 
@@ -116,7 +141,8 @@ document.addEventListener('DOMContentLoaded', () => {
       Utilities: '#FFCE56',
       Communication: '#8E44AD',
       Health: '#FF0000',
-      Others: '#E67E22'
+      Others: '#E67E22',
+      Income: '#10B981'
     };
 
     const categories = Object.keys(categorySums);
@@ -127,29 +153,40 @@ document.addEventListener('DOMContentLoaded', () => {
       window.spendingChart.destroy();
     }
 
+    // If no data, show empty chart or message? Chart.js handles empty data gracefully usually
+
+    Chart.defaults.color = '#94a3b8';
+    Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
+
     window.spendingChart = new Chart(ctx, {
       type: 'doughnut',
       data: {
         labels: categories,
         datasets: [{
-          label: 'Actual Spending by Category',
+          label: 'Spending',
           data: values,
           backgroundColor: backgroundColors,
-          borderWidth: 1
+          borderWidth: 0,
+          hoverOffset: 4
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
           legend: {
-            position: 'bottom'
+            position: 'bottom',
+            labels: {
+              padding: 20,
+              usePointStyle: true,
+            }
           }
-        }
+        },
+        cutout: '70%'
       }
     });
   }
 
   // Init
   renderBudgets();
-  updateChart();
 });
