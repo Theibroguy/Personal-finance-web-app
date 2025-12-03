@@ -81,16 +81,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function togglePassword(id, el) {
   const input = document.getElementById(id);
-  const [showIcon, hideIcon] = el.querySelectorAll('svg');
+  const showIcon = el.querySelector('.show');
+  const hideIcon = el.querySelector('.hide');
 
   if (input.type === 'password') {
     input.type = 'text';
     showIcon.style.display = 'none';
-    hideIcon.style.display = 'inline';
-
+    hideIcon.style.display = 'inline-block';
   } else {
     input.type = 'password';
-    showIcon.style.display = 'inline';
+    showIcon.style.display = 'inline-block';
     hideIcon.style.display = 'none';
   }
 }

@@ -1,85 +1,106 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sign up</title>
+  <title>SpendSense | Sign Up</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="signup.css">
 </head>
+
 <body>
-  <div class="background-circles"></div>
+  <!-- Background Blobs -->
+  <div class="background-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
 
-  <div class="signup-wrapper">
-    <div class="signup-box">
-      <img src="Logos/ChatGPT Image Jul 11, 2025, 12_24_04 PM.png" alt="Web logo" class="logo" />
-      <h2>Create Account</h2>
-      <p class="subtitle">Join us and manage your money smartly</p>
+  <div class="wrapper">
+    <div class="signup-container">
+      <div class="signup-header">
+        <div class="logo">
+          <i class="fa-solid fa-wallet"></i>
+          <span>SpendSense</span>
+        </div>
+        <h2>Create Account</h2>
+        <p class="subtitle">Join us and manage your money smartly</p>
+      </div>
+
       <form id="signup-form">
-        <div class="input-group">
+        <div class="form-group">
           <label for="username">Username</label>
-          <input type="text" id="username" placeholder="Enter your username" required />
-        </div>
-        <div class="input-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" placeholder="e.g. johndoe@gmail.com" required />
+          <div class="input-wrapper">
+            <i class="fa-solid fa-user"></i>
+            <input type="text" id="username" placeholder="Enter your username" required />
+          </div>
         </div>
 
-        <div class="input-group">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" id="email" placeholder="e.g. johndoe@gmail.com" required />
+          </div>
+        </div>
+
+        <div class="form-group">
           <label for="password">Password</label>
-          <div class="password-wrapper">
-            <input type="password" id="password" required placeholder="Enter password"/>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="password" required placeholder="Enter password" />
             <span class="toggle-password" onclick="togglePassword('password', this)">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="eye-icon show">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-              </svg>
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="eye-icon hide">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-              </svg>
+              <i class="fa-solid fa-eye show"></i>
+              <i class="fa-solid fa-eye-slash hide" style="display: none;"></i>
             </span>
           </div>
           <div class="password-strength-container">
             <div id="password-strength-bar"></div>
             <span id="password-strength-text">Strength: </span>
-          </div> 
-        </div>
-
-        <div class="input-group">
-          <label for="confirm-password">Confirm Password</label>
-          <div class="password-wrapper">
-            <input type="password" id="confirm-password" required placeholder="Confirm password" />
-            <span class="toggle-password" onclick="togglePassword('confirm-password', this)">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="eye-icon show">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" />
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-              </svg>
-
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="eye-icon hide">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
-              </svg>
-
-            </span>
           </div>
         </div>
 
-        <div id="match-text" class="match-text"></div>
-        <button type="submit">Sign up</button>
-        <p class="or">OR</p>
+        <div class="form-group">
+          <label for="confirm-password">Confirm Password</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="confirm-password" required placeholder="Confirm password" />
+            <span class="toggle-password" onclick="togglePassword('confirm-password', this)">
+              <i class="fa-solid fa-eye show"></i>
+              <i class="fa-solid fa-eye-slash hide" style="display: none;"></i>
+            </span>
+          </div>
+          <div id="match-text" class="match-text"></div>
+        </div>
+
+        <button type="submit" class="submit-btn primary-btn">
+          Sign Up <i class="fa-solid fa-user-plus"></i>
+        </button>
+
+        <div class="divider">
+          <span>OR</span>
+        </div>
 
         <div class="social-buttons">
-          <button class="google">
-            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />Sign Up with Google
-          </button>
-          <button class="bank">
-            <img src="Logos/bank-svgrepo-com.svg" />Sign up with your bank
+          <button type="button" class="social-btn google">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
+            <span>Sign Up with Google</span>
           </button>
         </div>
 
-        <p class="login-link">Alredy have an account> <a href="Login.html">Login</a></p>
+        <p class="login-link">
+          Already have an account? <a href="Login.html">Login</a>
+        </p>
       </form>
     </div>
   </div>
 
   <script src="signup.js"></script>
+  <script src="transitions.js"></script>
 </body>
+
 </html>
