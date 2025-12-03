@@ -1,31 +1,31 @@
 :root {
-  /* Dark Mode (Default) */
+  /* Light Mode (Default) */
   --primary-color: #6366f1;
   --secondary-color: #a855f7;
   --accent-color: #ec4899;
+  --background-dark: #f8fafc;
+  --card-bg: #ffffff;
+  --text-light: #0f172a;
+  --text-gray: #475569;
+  --success: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
+  --glass-border: rgba(0, 0, 0, 0.05);
+  --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --input-bg: #ffffff;
+  --sidebar-bg: #ffffff;
+}
+
+body.dark-mode {
+  /* Dark Mode Overrides */
   --background-dark: #0f172a;
   --card-bg: rgba(30, 41, 59, 0.7);
   --text-light: #f8fafc;
   --text-gray: #94a3b8;
-  --success: #10b981;
-  --danger: #ef4444;
-  --warning: #f59e0b;
   --glass-border: rgba(255, 255, 255, 0.1);
   --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
   --input-bg: rgba(15, 23, 42, 0.6);
   --sidebar-bg: rgba(15, 23, 42, 0.6);
-}
-
-body.light-mode {
-  /* Light Mode Overrides */
-  --background-dark: #f0f2f5;
-  --card-bg: rgba(255, 255, 255, 0.8);
-  --text-light: #1e293b;
-  --text-gray: #64748b;
-  --glass-border: rgba(0, 0, 0, 0.1);
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.1);
-  --input-bg: rgba(255, 255, 255, 0.9);
-  --sidebar-bg: rgba(255, 255, 255, 0.8);
 }
 
 * {

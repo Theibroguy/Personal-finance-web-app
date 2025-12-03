@@ -1,3 +1,10 @@
+document.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  if (savedTheme === 'dark') {
+    document.body.classList.add('dark-mode');
+  }
+});
+
 const categoryIcons = {
   Food: 'fa-utensils',
   Transport: 'fa-car',
@@ -7,6 +14,13 @@ const categoryIcons = {
   Other: 'fa-circle-question',
   Income: 'fa-money-bill-wave'
 };
+
+const transactionList = document.getElementById('transaction-list');
+const toggleBtn = document.getElementById('toggle-btn');
+const sidebar = document.getElementById('sidebar');
+const filterSelect = document.getElementById('filter');
+const dateSearch = document.getElementById('date-search');
+let transactions = [];
 
 async function fetchTransactions() {
   const token = localStorage.getItem('token');
@@ -36,12 +50,14 @@ async function fetchTransactions() {
     renderTransactions();
   } catch (error) {
     console.error('Error fetching transactions:', error);
-    transactionList.innerHTML = '<li style="color: var(--danger);">Error loading transactions. Please try again later.</li>';
+    if (transactionList) {
+      transactionList.innerHTML = '<li style="color: var(--danger);">Error loading transactions. Please try again later.</li>';
+    }
   }
 }
 
-
 function renderTransactions(filter = 'all', date = '') {
+  if (!transactionList) return;
   transactionList.innerHTML = '';
 
   if (transactions.length === 0) {
@@ -108,13 +124,24 @@ function renderTransactions(filter = 'all', date = '') {
   });
 }
 
+// Event Listeners
+if (filterSelect) {
+  filterSelect.addEventListener('change', () => {
+    renderTransactions(filterSelect.value, dateSearch ? dateSearch.value : '');
+  });
+}
 
-
-// on load
-fetchTransactions();
+if (dateSearch) {
+  dateSearch.addEventListener('input', () => {
+    renderTransactions(filterSelect ? filterSelect.value : 'all', dateSearch.value);
+  });
+}
 
 if (toggleBtn && sidebar) {
   toggleBtn.addEventListener('click', function () {
     sidebar.classList.toggle('collapsed');
   });
 }
+
+// on load
+fetchTransactions();
