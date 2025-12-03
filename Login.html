@@ -1,49 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login</title>
+  <title>SpendSense | Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="Login.css">
 </head>
-<body>
-  <div class="background-circles"></div>
 
-  <div class="login-wrapper">
-    <div class="login-box">
-      <img src="Logos/ChatGPT Image Jul 11, 2025, 12_24_04 PM.png" alt="Web Logo" class="logo" />
-      <h2>Welcome Back!</h2>
-      <p class="subtitle">Please sign in to your account</p>
+<body>
+  <!-- Background Blobs -->
+  <div class="background-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <div class="wrapper">
+    <div class="login-container">
+      <div class="login-header">
+        <div class="logo">
+          <i class="fa-solid fa-wallet"></i>
+          <span>SpendSense</span>
+        </div>
+        <h2>Welcome Back!</h2>
+        <p class="subtitle">Please sign in to your account</p>
+      </div>
+
       <form id="login-form">
-        <div class="input-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" placeholder="e.g. johndoe@gmail.com" required>
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-envelope"></i>
+            <input type="email" id="email" placeholder="e.g. johndoe@gmail.com" required>
+          </div>
         </div>
-        <div class="input-group">
+
+        <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" id="password" placeholder="Your password" required>
+          <div class="input-wrapper">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="password" placeholder="Your password" required>
+            <span class="toggle-password" onclick="togglePassword()">
+              <i class="fa-solid fa-eye show"></i>
+              <i class="fa-solid fa-eye-slash hide" style="display: none;"></i>
+            </span>
+          </div>
         </div>
+
         <div class="options">
-          <label><input type="checkbox"> Remember me</label>
-          <a href="#">Forgot Password?</a>
+          <label class="checkbox-container">
+            <input type="checkbox">
+            <span class="checkmark"></span>
+            Remember me
+          </label>
+          <a href="#" class="forgot-password">Forgot Password?</a>
         </div>
-        <button type="submit">Login</button>
-        <p class="or">OR</p>
+
+        <button type="submit" class="submit-btn primary-btn">
+          Sign In <i class="fa-solid fa-arrow-right"></i>
+        </button>
+
+        <div class="divider">
+          <span>OR</span>
+        </div>
+
         <div class="social-buttons">
-          <button class="google">
+          <button type="button" class="social-btn google">
             <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" />
             <span>Sign in with Google</span>
           </button>
-          <button class="bank">
-            <img src="Logos/bank-svgrepo-com.svg" alt="Bank" />
-            <span>Sign in with your bank</span>
-          </button>
         </div>
-        <p class="register">Don't have an account? <a href="signup.html">Sign up</a></p>
+
+        <p class="register-link">
+          Don't have an account? <a href="signup.html">Sign up</a>
+        </p>
       </form>
     </div>
   </div>
-  
+
   <script src="login.js"></script>
+  <script src="transitions.js"></script>
+  <script>
+    function togglePassword() {
+      const passwordInput = document.getElementById('password');
+      const showIcon = document.querySelector('.toggle-password .show');
+      const hideIcon = document.querySelector('.toggle-password .hide');
+
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        showIcon.style.display = 'none';
+        hideIcon.style.display = 'block';
+      } else {
+        passwordInput.type = 'password';
+        showIcon.style.display = 'block';
+        hideIcon.style.display = 'none';
+      }
+    }
+  </script>
 </body>
+
 </html>
