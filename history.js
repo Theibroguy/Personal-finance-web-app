@@ -5,6 +5,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
   let transactions = [];
 
+  const categoryIcons = {
+    Food: 'fa-utensils',
+    Transport: 'fa-car',
+    Utilities: 'fa-bolt',
+    Shopping: 'fa-bag-shopping',
+    Health: 'fa-heart-pulse',
+    Other: 'fa-circle-question',
+    Income: 'fa-money-bill-wave'
+  };
+
   async function fetchTransactions() {
     const token = localStorage.getItem('token');
     if (!token) {
@@ -33,7 +43,7 @@ document.addEventListener('DOMContentLoaded', function () {
       renderTransactions();
     } catch (error) {
       console.error('Error fetching transactions:', error);
-      transactionList.innerHTML = '<li>Error loading transactions. Please try again later.</li>';
+      transactionList.innerHTML = '<li style="color: var(--danger);">Error loading transactions. Please try again later.</li>';
     }
   }
 
@@ -42,7 +52,7 @@ document.addEventListener('DOMContentLoaded', function () {
     transactionList.innerHTML = '';
 
     if (transactions.length === 0) {
-      transactionList.innerHTML = '<li>No transactions found.</li>';
+      transactionList.innerHTML = '<li style="color: var(--text-gray);">No transactions found.</li>';
       return;
     }
 
@@ -60,28 +70,46 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       const dateKey = transaction.date ? transaction.date.split('T')[0] : 'Unknown Date';
-      if (!grouped[date]) grouped[dateKey] = [];
+      if (!grouped[dateKey]) grouped[dateKey] = [];
       grouped[dateKey].push(transaction);
     });
 
     const dates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
 
     if (dates.length === 0) {
-      transactionList.innerHTML = '<li>No matching transactions.</li>';
+      transactionList.innerHTML = '<li style="color: var(--text-gray);">No matching transactions.</li>';
+      return;
     }
 
     dates.forEach(date => {
       const heading = document.createElement('h3');
       heading.textContent = new Date(date).toDateString();
-      heading.style.marginTop = '20px';
       transactionList.appendChild(heading);
 
       grouped[date].forEach(transaction => {
         const li = document.createElement('li');
+        const isExpense = transaction.type === 'expense';
         const formattedAmount = Math.abs(transaction.amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-        li.textContent = `${transaction.title}: ₦${formattedAmount}`;
-        li.classList.add(transaction.amount < 0 ? 'expense' : 'income');
-        li.style.color = transaction.amount < 0 ? 'red' : 'green';
+        const category = transaction.category || 'Other';
+        const iconClass = categoryIcons[category] || 'fa-circle-question';
+
+        li.className = isExpense ? 'expense' : 'income';
+
+        li.innerHTML = `
+          <div class="transaction-info">
+            <div class="transaction-icon">
+              <i class="fa-solid ${iconClass}"></i>
+            </div>
+            <div class="transaction-details">
+              <h4>${transaction.title}</h4>
+              <span class="transaction-category">${category}</span>
+            </div>
+          </div>
+          <span class="transaction-amount">
+            ${isExpense ? '-' : '+'}₦${formattedAmount}
+          </span>
+        `;
+
         transactionList.appendChild(li);
       });
     });

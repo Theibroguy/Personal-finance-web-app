@@ -1,55 +1,118 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Transaction History</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SpendSense | Transaction History</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="history.css" />
 </head>
+
 <body>
+  <div class="background-blobs">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
   <div class="wrapper">
-    <!-- Sidebar (same as dashboard) -->
+    <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
-      <button id="toggle-btn" class="toggle-btn">☰</button>
+      <div class="sidebar-header">
+        <div class="logo">
+          <i class="fa-solid fa-wallet"></i>
+          <span>SpendSense</span>
+        </div>
+        <button id="toggle-btn" class="toggle-btn" title="Toggle Sidebar">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+
       <nav>
         <ul>
-          <li><a href="Dashboard.html">Dashboard</a></li>
-          <li><a href="Transaction-history.html">Transaction History</a></li>
-          <li><a href="Budget.html">Budget</a></li>
-          <li><a href="#">Settings</a></li>
+          <li>
+            <a href="Dashboard.html">
+              <i class="fa-solid fa-chart-pie"></i>
+              <span>Dashboard</span>
+            </a>
+          </li>
+          <li class="active">
+            <a href="Transaction-history.html">
+              <i class="fa-solid fa-list"></i>
+              <span>History</span>
+            </a>
+          </li>
+          <li>
+            <a href="Budget.html">
+              <i class="fa-solid fa-piggy-bank"></i>
+              <span>Budget</span>
+            </a>
+          </li>
+          <li>
+            <a href="Settings.html">
+              <i class="fa-solid fa-gear"></i>
+              <span>Settings</span>
+            </a>
+          </li>
         </ul>
       </nav>
+
+      <div class="sidebar-footer">
+        <a href="#" class="logout-link">
+          <i class="fa-solid fa-right-from-bracket"></i>
+          <span>Logout</span>
+        </a>
+      </div>
     </aside>
 
     <!-- Main Content -->
-    <main class="main-content">
-      <header>
+    <div class="main-panel">
+      <header class="top-bar">
         <h1>Transaction History</h1>
+        <div class="user-profile">
+          <span>Welcome Back</span>
+          <div class="avatar"><i class="fa-solid fa-user"></i></div>
+        </div>
       </header>
 
-      <!-- Fixed Filter/Search Bar -->
-      <div class="filter-bar">
-        <div class="filter-group">
-          <label for="filter">Type:</label>
-          <select id="filter">
-            <option value="all">All</option>
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
+      <main class="main-content">
+        <!-- Filter Bar -->
+        <div class="filter-container">
+          <div class="filter-bar">
+            <div class="filter-group">
+              <label for="filter"><i class="fa-solid fa-filter"></i> Type</label>
+              <div class="select-wrapper">
+                <select id="filter">
+                  <option value="all">All Transactions</option>
+                  <option value="income">Income Only</option>
+                  <option value="expense">Expense Only</option>
+                </select>
+              </div>
+            </div>
+            <div class="filter-group">
+              <label for="date-search"><i class="fa-solid fa-calendar"></i> Date</label>
+              <div class="input-wrapper">
+                <input type="date" id="date-search" />
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="filter-group">
-          <label for="date-search">Date:</label>
-          <input type="date" id="date-search" />
-        </div>
-      </div>
 
-      <!-- Transactions -->
-      <section>
-        <ul id="transaction-list" class="transaction-list"></ul>
-      </section>
-    </main>
+        <!-- Transactions -->
+        <section class="transactions-section">
+          <ul id="transaction-list" class="transaction-list">
+            <!-- Transactions injected here -->
+          </ul>
+        </section>
+      </main>
+    </div>
   </div>
 
   <script src="history.js"></script>
 </body>
+
 </html>
