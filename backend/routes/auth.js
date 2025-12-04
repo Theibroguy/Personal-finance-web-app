@@ -25,7 +25,22 @@ router.post('/check-username', async (req, res) => {
   }
 });
 
-// POST / signup
+// POST /check-email
+router.post('/check-email', async (req, res) => {
+  const { email } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
+      return res.json({ available: false, message: 'Email is already taken' });
+    }
+    res.json({ available: true, message: 'Email is available' });
+  } catch (error) {
+    console.error('Check email error', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// POST /signup
 router.post('/signup', async (req, res) => {
   const { username, email, password } = req.body;
 

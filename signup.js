@@ -48,6 +48,49 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 500); // 500ms delay
   });
 
+  const emailInput = document.getElementById('email');
+  const emailFeedback = document.getElementById('email-feedback');
+  let emailTimeout = null;
+
+  emailInput.addEventListener('input', () => {
+    const email = emailInput.value;
+
+    // Clear previous timeout
+    clearTimeout(emailTimeout);
+
+    // Reset feedback if empty
+    if (email.length === 0) {
+      emailFeedback.textContent = '';
+      emailFeedback.className = 'feedback-text';
+      submitButton.disabled = false;
+      return;
+    }
+
+    // Debounce the API call
+    emailTimeout = setTimeout(async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/auth/check-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email })
+        });
+        const data = await res.json();
+
+        if (data.available) {
+          emailFeedback.textContent = 'Email is available ✅';
+          emailFeedback.style.color = '#10b981'; // Success green
+          submitButton.disabled = false;
+        } else {
+          emailFeedback.textContent = 'Email is already taken ❌';
+          emailFeedback.style.color = '#ef4444'; // Danger red
+          submitButton.disabled = true;
+        }
+      } catch (error) {
+        console.error('Error checking email:', error);
+      }
+    }, 500); // 500ms delay
+  });
+
   confirmInput.addEventListener('input', () => {
     matchText.textContent = confirmInput.value === passwordInput.value ? 'Passwords match ✅' : 'Passwords do not match ❌';
   });
