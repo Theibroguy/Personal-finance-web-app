@@ -10,9 +10,17 @@ const generateToken = (id) => {
   });
 };
 
+// Username validation regex
+const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+
 // POST /check-username
 router.post('/check-username', async (req, res) => {
   const { username } = req.body;
+
+  if (!usernameRegex.test(username)) {
+    return res.json({ available: false, message: 'Invalid format: 3-20 chars, no special chars or spaces' });
+  }
+
   try {
     const user = await User.findOne({ username });
     if (user) {
@@ -43,6 +51,10 @@ router.post('/check-email', async (req, res) => {
 // POST /signup
 router.post('/signup', async (req, res) => {
   const { username, email, password } = req.body;
+
+  if (!usernameRegex.test(username)) {
+    return res.status(400).json({ message: 'Invalid username format' });
+  }
 
   try {
     // Checks if user alredy exists

@@ -23,6 +23,15 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
+    // Client-side validation
+    const usernameRegex = /^[a-zA-Z0-9_-]{3,20}$/;
+    if (!usernameRegex.test(username)) {
+      usernameFeedback.textContent = 'Invalid format: 3-20 chars, letters, numbers, _, - only';
+      usernameFeedback.style.color = '#ef4444'; // Danger red
+      submitButton.disabled = true;
+      return;
+    }
+
     // Debounce the API call
     timeout = setTimeout(async () => {
       try {
@@ -38,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
           usernameFeedback.style.color = '#10b981'; // Success green
           submitButton.disabled = false;
         } else {
-          usernameFeedback.textContent = 'Username is already taken ❌';
+          usernameFeedback.textContent = data.message || 'Username is already taken ❌';
           usernameFeedback.style.color = '#ef4444'; // Danger red
           submitButton.disabled = true;
         }
