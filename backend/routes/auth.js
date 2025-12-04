@@ -2,7 +2,10 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+
 const User = require('../models/userModel');
+const crypto = require('crypto');
+const nodemailer = require('nodemailer');
 
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -175,6 +178,93 @@ router.put('/preferences', async (req, res) => {
     res.json({ message: 'Preferences updates successfully' });
   } catch (err) {
     console.error('Error updating preferences', err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// POST /forgot-password
+router.post('/forgot-password', async (req, res) => {
+  const { email } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Generate token
+    const token = crypto.randomBytes(20).toString('hex');
+
+    // Set token and expiration
+    user.resetPasswordToken = token;
+    user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
+
+    await user.save();
+
+    // Create transporter (Using Ethereal for dev)
+    const testAccount = await nodemailer.createTestAccount();
+
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      secure: false,
+      auth: {
+        user: testAccount.user,
+        pass: testAccount.pass,
+      },
+    });
+
+    const resetUrl = `http://localhost:5000/reset-password.html?token=${token}`;
+
+    const mailOptions = {
+      from: '"SpendSense Support" <support@spendsense.com>',
+      to: user.email,
+      subject: 'Password Reset Request',
+      text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n` +
+        `Please click on the following link, or paste this into your browser to complete the process:\n\n` +
+        `${resetUrl}\n\n` +
+        `If you did not request this, please ignore this email and your password will remain unchanged.\n`,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+
+    console.log('Message sent: %s', info.messageId);
+    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+
+    res.json({ message: 'Password reset link sent to email', previewUrl: nodemailer.getTestMessageUrl(info) });
+
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// POST /reset-password
+router.post('/reset-password', async (req, res) => {
+  const { token, newPassword } = req.body;
+
+  try {
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Password reset token is invalid or has expired' });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+
+    await user.save();
+
+    res.json({ message: 'Password has been updated' });
+  } catch (error) {
+    console.error('Reset password error:', error);
     res.status(500).json({ message: 'Server error' });
   }
 });

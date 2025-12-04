@@ -1,7 +1,6 @@
 const mongoose = require('mongoose');
-const { type } = require('os');
 
-// Define the username schema
+// Define the user schema
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
@@ -18,8 +17,10 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
-  }
-}, {timestamps: true});
+  },
+  resetPasswordToken: { type: String },
+  resetPasswordExpires: { type: Date }
+}, { timestamps: true });
 
 // Create the user model
 const User = mongoose.model('User', userSchema);
