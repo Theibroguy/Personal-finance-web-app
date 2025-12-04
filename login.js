@@ -1,10 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
   const loginForm = document.getElementById('login-form');
+  const emailInput = document.getElementById('email');
+  const rememberMeCheckbox = document.getElementById('remember-me');
+
+  // Check if email is saved in localStorage
+  const savedEmail = localStorage.getItem('savedEmail');
+  if (savedEmail) {
+    emailInput.value = savedEmail;
+    rememberMeCheckbox.checked = true;
+  }
 
   loginForm.addEventListener('submit', async function (e) {
     e.preventDefault(); // Prevent form from reloading the page
 
-    const email = document.getElementById('email').value.trim();
+    const email = emailInput.value.trim();
     const password = document.getElementById('password').value;
 
     if (email === '' || password === '') {
@@ -24,6 +33,13 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await response.json();
 
       if (response.ok) {
+        // Handle Remember Me
+        if (rememberMeCheckbox.checked) {
+          localStorage.setItem('savedEmail', email);
+        } else {
+          localStorage.removeItem('savedEmail');
+        }
+
         alert(data.message || 'Login successful');
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));

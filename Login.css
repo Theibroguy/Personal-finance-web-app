@@ -174,13 +174,14 @@ body {
   position: relative;
 }
 
-.input-wrapper i {
+.input-wrapper>i {
   position: absolute;
   left: 16px;
   top: 50%;
   transform: translateY(-50%);
   color: var(--text-gray);
   transition: color 0.3s;
+  pointer-events: none;
 }
 
 .input-wrapper input {
@@ -188,7 +189,8 @@ body {
   background: var(--input-bg);
   border: 1px solid var(--glass-border);
   color: var(--text-light);
-  padding: 12px 16px 12px 44px;
+  padding: 12px 45px 12px 44px;
+  /* Increased right padding */
   border-radius: 12px;
   font-size: 14px;
   outline: none;
@@ -207,12 +209,15 @@ body {
 
 .toggle-password {
   position: absolute;
-  right: 16px;
+  right: 12px;
+  /* Moved slightly right */
   top: 50%;
   transform: translateY(-50%);
   cursor: pointer;
   color: var(--text-gray);
   transition: color 0.3s;
+  z-index: 10;
+  /* Ensure on top */
 }
 
 .toggle-password:hover {
