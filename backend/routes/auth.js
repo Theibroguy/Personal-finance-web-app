@@ -10,6 +10,21 @@ const generateToken = (id) => {
   });
 };
 
+// POST /check-username
+router.post('/check-username', async (req, res) => {
+  const { username } = req.body;
+  try {
+    const user = await User.findOne({ username });
+    if (user) {
+      return res.json({ available: false, message: 'Username is already taken' });
+    }
+    res.json({ available: true, message: 'Username is available' });
+  } catch (error) {
+    console.error('Check username error', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // POST / signup
 router.post('/signup', async (req, res) => {
   const { username, email, password } = req.body;

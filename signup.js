@@ -3,6 +3,50 @@ document.addEventListener('DOMContentLoaded', () => {
   const confirmInput = document.getElementById('confirm-password');
   const matchText = document.getElementById('match-text');
   const form = document.getElementById('signup-form');
+  const usernameInput = document.getElementById('username');
+  const usernameFeedback = document.getElementById('username-feedback');
+  const submitButton = form.querySelector('button[type="submit"]');
+
+  let timeout = null;
+
+  usernameInput.addEventListener('input', () => {
+    const username = usernameInput.value;
+
+    // Clear previous timeout
+    clearTimeout(timeout);
+
+    // Reset feedback if empty
+    if (username.length === 0) {
+      usernameFeedback.textContent = '';
+      usernameFeedback.className = 'feedback-text';
+      submitButton.disabled = false;
+      return;
+    }
+
+    // Debounce the API call
+    timeout = setTimeout(async () => {
+      try {
+        const res = await fetch('http://localhost:5000/api/auth/check-username', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username })
+        });
+        const data = await res.json();
+
+        if (data.available) {
+          usernameFeedback.textContent = 'Username is available ✅';
+          usernameFeedback.style.color = '#10b981'; // Success green
+          submitButton.disabled = false;
+        } else {
+          usernameFeedback.textContent = 'Username is already taken ❌';
+          usernameFeedback.style.color = '#ef4444'; // Danger red
+          submitButton.disabled = true;
+        }
+      } catch (error) {
+        console.error('Error checking username:', error);
+      }
+    }, 500); // 500ms delay
+  });
 
   confirmInput.addEventListener('input', () => {
     matchText.textContent = confirmInput.value === passwordInput.value ? 'Passwords match ✅' : 'Passwords do not match ❌';
