@@ -414,3 +414,89 @@ body {
 .page-transition-exit {
   animation: fadeOutDown 0.3s ease-in forwards;
 }
+
+/* Login Success Overlay */
+.login-success-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(8px);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.success-content {
+  background: var(--card-bg);
+  padding: 40px;
+  border-radius: 24px;
+  text-align: center;
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  animation: scaleIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  max-width: 90%;
+  width: 320px;
+}
+
+.success-content h2 {
+  color: var(--text-light);
+  margin: 20px 0 10px;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.success-content p {
+  color: var(--text-gray);
+  font-size: 14px;
+}
+
+/* Checkmark Animation */
+.success-icon {
+  font-size: 64px;
+  color: var(--success);
+  margin-bottom: 16px;
+  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+
+  60% {
+    transform: scale(1.1);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

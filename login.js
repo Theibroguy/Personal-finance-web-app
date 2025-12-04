@@ -40,10 +40,20 @@ document.addEventListener('DOMContentLoaded', () => {
           localStorage.removeItem('savedEmail');
         }
 
-        alert(data.message || 'Login successful');
+        // Show success animation
+        const overlay = document.querySelector('.login-success-overlay');
+        if (overlay) {
+          overlay.style.display = 'flex';
+        }
+
+        // Store token and user data
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.href = 'Dashboard.html';
+
+        // Redirect after 2 seconds
+        setTimeout(() => {
+          window.location.href = 'Dashboard.html';
+        }, 2000);
       } else {
         alert(data.message || 'Invalid login credentials');
       }
