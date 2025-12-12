@@ -6,13 +6,20 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const categoryIcons = {
-  Food: 'fa-utensils',
-  Transport: 'fa-car',
-  Utilities: 'fa-bolt',
-  Shopping: 'fa-bag-shopping',
-  Health: 'fa-heart-pulse',
-  Other: 'fa-circle-question',
-  Income: 'fa-money-bill-wave'
+  "Housing": "fa-house",
+  "Transportation": "fa-car",
+  "Food": "fa-utensils",
+  "Utilities": "fa-bolt",
+  "Healthcare": "fa-heart-pulse",
+  "Entertainment": "fa-film",
+  "Shopping": "fa-bag-shopping",
+  "Education": "fa-graduation-cap",
+  "Savings & Investments": "fa-piggy-bank",
+  "Debt Payments": "fa-credit-card",
+  "Personal Care": "fa-spa",
+  "Gifts & Donations": "fa-gift",
+  "Other": "fa-circle-question",
+  "Income": "fa-money-bill-wave"
 };
 
 const transactionList = document.getElementById('transaction-list');

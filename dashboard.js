@@ -6,13 +6,37 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   const categoryColors = {
-    Food: '#4CAF50',
-    Transport: '#FF6384',
-    Clothes: '#36A2EB',
-    Utilities: '#FFCE56',
-    Communication: '#8E44AD',
-    Health: '#FF0000',
-    Others: '#E67E22'
+    "Housing": "#8E44AD",
+    "Transportation": "#FF6384",
+    "Food": "#4CAF50",
+    "Utilities": "#FFCE56",
+    "Healthcare": "#FF0000",
+    "Entertainment": "#36A2EB",
+    "Shopping": "#9C27B0",
+    "Education": "#03A9F4",
+    "Savings & Investments": "#009688",
+    "Debt Payments": "#795548",
+    "Personal Care": "#E91E63",
+    "Gifts & Donations": "#673AB7",
+    "Other": "#607D8B",
+    "Income": "#10B981"
+  };
+
+  const categoryIcons = {
+    "Housing": "fa-house",
+    "Transportation": "fa-car",
+    "Food": "fa-utensils",
+    "Utilities": "fa-bolt",
+    "Healthcare": "fa-heart-pulse",
+    "Entertainment": "fa-film",
+    "Shopping": "fa-bag-shopping",
+    "Education": "fa-graduation-cap",
+    "Savings & Investments": "fa-piggy-bank",
+    "Debt Payments": "fa-credit-card",
+    "Personal Care": "fa-spa",
+    "Gifts & Donations": "fa-gift",
+    "Other": "fa-circle-question",
+    "Income": "fa-money-bill-wave"
   };
 
   const form = document.getElementById('transaction-form');
@@ -57,7 +81,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!transactionList) return;
     transactionList.innerHTML = '';
 
-    transactions.forEach(transaction => {
+    // Show only the most recent 5 transactions
+    const recentTransactions = transactions.slice(0, 5);
+
+    recentTransactions.forEach(transaction => {
       const li = document.createElement('li');
       li.className = transaction.type === 'expense' ? 'expense' : 'income';
 
@@ -67,17 +94,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const category = transaction.category || "Others";
       const color = categoryColors[category] || '#999';
+      const icon = categoryIcons[category] || 'fa-circle-question';
 
       li.innerHTML = `
-        <span style = "color: ${color}; font-weight: 600;">
-          ${transaction.title} (${category})
-        </span> - ₦${formattedAmount}
-        <button class = "delete-btn" data-id="${transaction._id}">✖</button>
+        <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: ${color}20; display: flex; align-items: center; justify-content: center; color: ${color};">
+                <i class="fa-solid ${icon}"></i>
+            </div>
+            <div>
+                <span style="display: block; font-weight: 600; color: var(--text-light);">${transaction.title}</span>
+                <span style="font-size: 12px; color: ${color};">${category}</span>
+            </div>
+        </div>
+        <div>
+            <span style="font-weight: 600;">₦${formattedAmount}</span>
+        </div>
       `;
-
-      li.querySelector('.delete-btn').addEventListener('click', (e) => {
-        deleteTransaction(e.target.dataset.id);
-      });
 
       transactionList.appendChild(li);
     });
@@ -121,7 +153,18 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (form) {
-    form.addEventListener('submit', async (e) => {
+    // Modal Elements
+    const confirmationModal = document.getElementById('confirmationModal');
+    const confirmTitle = document.getElementById('confirmTitle');
+    const confirmAmount = document.getElementById('confirmAmount');
+    const confirmType = document.getElementById('confirmType');
+    const confirmCategory = document.getElementById('confirmCategory');
+    const confirmBtn = document.getElementById('confirmBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+
+    let pendingTransaction = null;
+
+    form.addEventListener('submit', (e) => {
       e.preventDefault();
 
       const title = titleInput.value.trim();
@@ -134,12 +177,22 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const newTransaction = {
-        title,
-        amount,
-        type,
-        category
-      };
+      // Store data temporarily
+      pendingTransaction = { title, amount, type, category };
+
+      // Populate Modal
+      confirmTitle.textContent = title;
+      confirmAmount.textContent = `₦${amount.toFixed(2)}`;
+      confirmType.textContent = type;
+      confirmCategory.textContent = category;
+
+      // Show Modal
+      confirmationModal.classList.add('active');
+    });
+
+    // Handle Confirm
+    confirmBtn.addEventListener('click', async () => {
+      if (!pendingTransaction) return;
 
       try {
         const res = await fetch('http://localhost:5000/api/transactions', {
@@ -148,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
             'Content-Type': 'application/json',
             'x-auth-token': token
           },
-          body: JSON.stringify(newTransaction)
+          body: JSON.stringify(pendingTransaction)
         });
 
         const data = await res.json();
@@ -156,8 +209,27 @@ document.addEventListener('DOMContentLoaded', () => {
         displayTransactions();
         updateSummary();
         form.reset();
+
+        // Hide Modal
+        confirmationModal.classList.remove('active');
+        pendingTransaction = null;
       } catch (err) {
         console.error('Error adding transaction:', err);
+        alert('Failed to add transaction');
+      }
+    });
+
+    // Handle Cancel
+    cancelBtn.addEventListener('click', () => {
+      confirmationModal.classList.remove('active');
+      pendingTransaction = null;
+    });
+
+    // Close on outside click for confirmation modal
+    window.addEventListener('click', (e) => {
+      if (e.target === confirmationModal) {
+        confirmationModal.classList.remove('active');
+        pendingTransaction = null;
       }
     });
   }

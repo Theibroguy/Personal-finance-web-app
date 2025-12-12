@@ -268,14 +268,20 @@ function updateChart(transactions) {
     });
 
   const categoryColors = {
-    Food: '#4CAF50',
-    Transport: '#FF6384',
-    Clothes: '#36A2EB',
-    Utilities: '#FFCE56',
-    Communication: '#8E44AD',
-    Health: '#FF0000',
-    Others: '#E67E22',
-    Income: '#10B981'
+    "Housing": "#8E44AD",
+    "Transportation": "#FF6384",
+    "Food": "#4CAF50",
+    "Utilities": "#FFCE56",
+    "Healthcare": "#FF0000",
+    "Entertainment": "#36A2EB",
+    "Shopping": "#9C27B0",
+    "Education": "#03A9F4",
+    "Savings & Investments": "#009688",
+    "Debt Payments": "#795548",
+    "Personal Care": "#E91E63",
+    "Gifts & Donations": "#673AB7",
+    "Other": "#607D8B",
+    "Income": "#10B981"
   };
 
   const categories = Object.keys(categorySums);
