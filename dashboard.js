@@ -153,6 +153,34 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   if (form) {
+    // Category Logic
+    const incomeCategories = ["Income", "Gifts & Donations", "Savings & Investments", "Other"];
+    const expenseCategories = [
+      "Housing", "Transportation", "Food", "Utilities", "Healthcare",
+      "Entertainment", "Shopping", "Education", "Savings & Investments",
+      "Debt Payments", "Personal Care", "Gifts & Donations", "Other"
+    ];
+
+    function updateCategoryOptions(type) {
+      categoryInput.innerHTML = '<option value="">Select Category</option>';
+      const categories = type === 'income' ? incomeCategories : expenseCategories;
+
+      categories.forEach(cat => {
+        const option = document.createElement('option');
+        option.value = cat;
+        option.textContent = cat;
+        categoryInput.appendChild(option);
+      });
+    }
+
+    // Initialize with default type
+    updateCategoryOptions(typeInput.value);
+
+    // Listen for type changes
+    typeInput.addEventListener('change', (e) => {
+      updateCategoryOptions(e.target.value);
+    });
+
     // Modal Elements
     const confirmationModal = document.getElementById('confirmationModal');
     const confirmTitle = document.getElementById('confirmTitle');
