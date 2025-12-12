@@ -104,6 +104,26 @@
           </div>
         </section>
 
+        <!-- Chart Section -->
+        <section class="chart-section">
+          <div class="section-header">
+            <h2>Spending Overview</h2>
+            <select id="chartFilter" class="chart-filter">
+              <option value="month" selected>This Month</option>
+              <option value="all">All Time</option>
+            </select>
+          </div>
+          <div class="charts-wrapper">
+            <div class="chart-container-half">
+              <canvas id="expensePieChart"></canvas>
+            </div>
+            <div class="chart-divider"></div>
+            <div class="chart-container-half">
+              <canvas id="expenseBarChart"></canvas>
+            </div>
+          </div>
+        </section>
+
         <div class="content-grid">
           <section class="recent-transactions">
             <div class="section-header">
@@ -200,6 +220,7 @@
     </div>
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="dashboard.js"></script>
   <script src="transitions.js"></script>
 </body>

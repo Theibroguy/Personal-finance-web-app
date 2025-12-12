@@ -84,6 +84,16 @@ document.addEventListener('DOMContentLoaded', () => {
     // Show only the most recent 5 transactions
     const recentTransactions = transactions.slice(0, 5);
 
+    if (recentTransactions.length === 0) {
+      transactionList.innerHTML = `
+        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; min-height: 200px; color: var(--text-gray);">
+          <i class="fa-solid fa-clipboard-list" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+          <p style="font-size: 16px;">No recent transactions</p>
+        </div>
+      `;
+      return;
+    }
+
     recentTransactions.forEach(transaction => {
       const li = document.createElement('li');
       li.className = transaction.type === 'expense' ? 'expense' : 'income';
@@ -128,6 +138,7 @@ document.addEventListener('DOMContentLoaded', () => {
         transactions = transactions.filter(t => t._id !== id);
         displayTransactions();
         updateSummary();
+        updateChart();
       }
     } catch (err) {
       console.error('Error deleting transaction:', err);
@@ -236,6 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
         transactions.unshift(data);
         displayTransactions();
         updateSummary();
+        updateChart();
         form.reset();
 
         // Hide Modal
@@ -262,6 +274,146 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  let expensePieChart = null;
+  let expenseBarChart = null;
+
+  function updateChart() {
+    const pieCanvas = document.getElementById('expensePieChart');
+    const barCanvas = document.getElementById('expenseBarChart');
+    const filterSelect = document.getElementById('chartFilter'); // Get dropdown
+
+    if (!pieCanvas || !barCanvas) return;
+
+    const pieCtx = pieCanvas.getContext('2d');
+    const barCtx = barCanvas.getContext('2d');
+
+    // Filter Logic
+    const filterType = filterSelect ? filterSelect.value : 'all';
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    // Aggregate expenses by category
+    const expenseData = {};
+    const expenses = transactions.filter(t => {
+      if (t.type !== 'expense') return false;
+
+      if (filterType === 'month') {
+        const tDate = new Date(t.date);
+        return tDate.getMonth() === currentMonth && tDate.getFullYear() === currentYear;
+      }
+      return true;
+    });
+
+    if (expenses.length === 0) {
+      if (expensePieChart) {
+        expensePieChart.destroy();
+        expensePieChart = null;
+      }
+      if (expenseBarChart) {
+        expenseBarChart.destroy();
+        expenseBarChart = null;
+      }
+      return;
+    }
+
+    expenses.forEach(t => {
+      if (expenseData[t.category]) {
+        expenseData[t.category] += t.amount;
+      } else {
+        expenseData[t.category] = t.amount;
+      }
+    });
+
+    const categories = Object.keys(expenseData);
+    const amounts = Object.values(expenseData);
+    const colors = categories.map(cat => categoryColors[cat] || '#999');
+    const isDark = document.body.classList.contains('dark-mode');
+    const textColor = isDark ? '#f8fafc' : '#0f172a';
+    const gridColor = isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+
+    // --- Pie Chart ---
+    if (expensePieChart) expensePieChart.destroy();
+
+    expensePieChart = new Chart(pieCtx, {
+      type: 'doughnut',
+      data: {
+        labels: categories,
+        datasets: [{
+          data: amounts,
+          backgroundColor: colors,
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            position: 'bottom',
+            labels: { color: textColor, font: { family: "'Outfit', sans-serif" } }
+          }
+        }
+      }
+    });
+
+    // --- Bar Chart ---
+    if (expenseBarChart) expenseBarChart.destroy();
+
+    expenseBarChart = new Chart(barCtx, {
+      type: 'bar',
+      data: {
+        labels: categories,
+        datasets: [{
+          label: 'Amount',
+          data: amounts,
+          backgroundColor: colors,
+          borderRadius: 4,
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: { color: gridColor },
+            ticks: {
+              color: textColor,
+              callback: function (value) { return '₦' + value.toLocaleString(); }
+            },
+            border: { display: false }
+          },
+          x: {
+            grid: { display: false },
+            ticks: { color: textColor, autoSkip: false, maxRotation: 45, minRotation: 45 },
+            border: { display: false }
+          }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                let label = context.dataset.label || '';
+                if (label) label += ': ';
+                if (context.parsed.y !== null) {
+                  label += '₦' + context.parsed.y.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                }
+                return label;
+              }
+            }
+          }
+        }
+      }
+    });
+  }
+
   // Initialize
-  fetchTransactions();
+  fetchTransactions().then(updateChart);
+
+  const chartFilter = document.getElementById('chartFilter');
+  if (chartFilter) {
+    chartFilter.addEventListener('change', updateChart);
+  }
 });
