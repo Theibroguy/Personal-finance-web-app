@@ -15,6 +15,12 @@ const amountInput = document.getElementById('limit');
 const toggleBtn = document.getElementById('toggle-btn');
 const sidebar = document.getElementById('sidebar');
 
+// Modal Elements
+const modal = document.getElementById('budgetRequestModal');
+const closeModal = document.getElementById('closeModal');
+const modalTitle = document.getElementById('modalTitle');
+const modalTransactionList = document.getElementById('modalTransactionList');
+
 // Sidebar toggle functionality
 if (toggleBtn && sidebar) {
   toggleBtn.addEventListener('click', () => {
@@ -22,8 +28,28 @@ if (toggleBtn && sidebar) {
   });
 }
 
+// Close Modal
+if (closeModal) {
+  closeModal.addEventListener('click', () => {
+    modal.classList.remove('active');
+  });
+}
+
+// Close on outside click
+window.addEventListener('click', (e) => {
+  if (e.target === modal) {
+    modal.classList.remove('active');
+  }
+});
+
+
 function formatAmount(amount) {
   return parseFloat(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function formatDate(dateString) {
+  const options = { year: 'numeric', month: 'short', day: 'numeric' };
+  return new Date(dateString).toLocaleDateString(undefined, options);
 }
 
 // Fetch budgets from backend
@@ -82,9 +108,12 @@ async function renderBudgets() {
   budgets.forEach((budget) => {
     const budgetCategory = budget.category.toLowerCase();
 
-    const spent = transactions
-      .filter(t => t.type === 'expense' && (t.category?.toLowerCase() === budgetCategory || (budgetCategory === 'others' && !t.category)))
-      .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+    // Filter transactions for this budget
+    const budgetTransactions = transactions.filter(t =>
+      t.type === 'expense' && (t.category?.toLowerCase() === budgetCategory || (budgetCategory === 'others' && !t.category))
+    );
+
+    const spent = budgetTransactions.reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
     const percentageUsed = Math.min((spent / budget.amount) * 100, 100).toFixed(1);
 
@@ -97,13 +126,16 @@ async function renderBudgets() {
 
     const li = document.createElement('li');
     li.className = 'budget-item';
+    // Add cursor pointer to indicate clickability
+    li.style.cursor = 'pointer';
+
     li.innerHTML = `
         <div class="budget-header">
           <div class="budget-info">
              <div class="category-icon"><i class="fa-solid fa-tag"></i></div>
              <h3>${budget.category}</h3>
           </div>
-          <button class="delete-btn" title="Delete" data-id="${budget._id}" style="background: none; border: none; color: var(--text-gray); cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
+          <button class="delete-btn" title="Delete" data-id="${budget._id}" style="background: none; border: none; color: var(--text-gray); cursor: pointer; z-index: 10;"><i class="fa-solid fa-trash"></i></button>
         </div>
         <div class="budget-stats" style="margin-bottom: 8px; display: flex; justify-content: space-between;">
           <span>₦${formatAmount(spent)} spent</span>
@@ -116,11 +148,18 @@ async function renderBudgets() {
       `;
 
     // Delete functionality
-    li.querySelector('.delete-btn').addEventListener('click', async (e) => {
+    const deleteBtn = li.querySelector('.delete-btn');
+    deleteBtn.addEventListener('click', async (e) => {
+      e.stopPropagation(); // Prevent modal from opening
       const id = e.currentTarget.getAttribute('data-id');
       if (confirm('Delete this budget?')) {
         await deleteBudget(id);
       }
+    });
+
+    // Click event for modal
+    li.addEventListener('click', () => {
+      showBudgetDetails(budget.category, budgetTransactions);
     });
 
     budgetList.appendChild(li);
@@ -133,6 +172,33 @@ async function renderBudgets() {
   });
 
   updateChart(transactions);
+}
+
+function showBudgetDetails(category, transactions) {
+  modalTitle.textContent = `${category} Transactions`;
+  modalTransactionList.innerHTML = '';
+
+  if (transactions.length === 0) {
+    modalTransactionList.innerHTML = '<li style="color: var(--text-gray); background: transparent; border: none; text-align: center;">No transactions found.</li>';
+  } else {
+    transactions.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach(t => {
+      const li = document.createElement('li');
+      li.className = 'budget-item'; // Reuse item style but simpler
+      li.style.padding = '12px';
+      li.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h4 style="font-size: 14px; font-weight: 500; color: var(--text-light);">${t.title || 'Untitled'}</h4>
+                        <span style="font-size: 12px; color: var(--text-gray);">${formatDate(t.date)}</span>
+                    </div>
+                    <span style="font-weight: 600; color: var(--danger);">-₦${formatAmount(t.amount)}</span>
+                </div>
+            `;
+      modalTransactionList.appendChild(li);
+    });
+  }
+
+  modal.classList.add('active');
 }
 
 async function deleteBudget(id) {
