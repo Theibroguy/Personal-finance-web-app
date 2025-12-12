@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         alert(data.message || "Signup successful!");
         localStorage.setItem('token', data.token);
         localStorage.setItem('user', JSON.stringify(data.user));
-        window.location.href = 'Dashboard.html';
+        window.location.href = 'signup-success.html';
       } else {
         alert(data.message || "Sign up failed.");
       }
