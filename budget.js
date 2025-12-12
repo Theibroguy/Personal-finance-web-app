@@ -6,7 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-let budgets = JSON.parse(localStorage.getItem('budgets')) || [];
+let budgets = [];
+const budgetList = document.getElementById('budget-list');
+const form = document.getElementById('budget-form');
+const categoryInput = document.getElementById('category');
+const amountInput = document.getElementById('limit');
 
 const toggleBtn = document.getElementById('toggle-btn');
 const sidebar = document.getElementById('sidebar');
@@ -18,14 +22,34 @@ if (toggleBtn && sidebar) {
   });
 }
 
-function saveBudgets() {
-  localStorage.setItem('budgets', JSON.stringify(budgets));
-}
-
 function formatAmount(amount) {
   return parseFloat(amount).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
+// Fetch budgets from backend
+async function fetchBudgets() {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    window.location.href = 'Login.html';
+    return;
+  }
+
+  try {
+    const res = await fetch('http://localhost:5000/api/budgets', {
+      headers: { 'x-auth-token': token }
+    });
+    if (res.ok) {
+      budgets = await res.json();
+      renderBudgets();
+    } else {
+      console.error('Failed to fetch budgets');
+    }
+  } catch (err) {
+    console.error('Error fetching budgets:', err);
+  }
+}
+
+// Fetch transactions from backend
 async function fetchTransactions() {
   const token = localStorage.getItem('token');
   if (!token) return [];
@@ -48,13 +72,14 @@ async function renderBudgets() {
 
   if (budgets.length === 0) {
     budgetList.innerHTML = '<li style="color: var(--text-gray); border: none; background: transparent;">No budgets set yet.</li>';
-    updateChart([]);
+    const transactions = await fetchTransactions();
+    updateChart(transactions);
     return;
   }
 
   const transactions = await fetchTransactions();
 
-  budgets.forEach((budget, index) => {
+  budgets.forEach((budget) => {
     const budgetCategory = budget.category.toLowerCase();
 
     const spent = transactions
@@ -71,25 +96,30 @@ async function renderBudgets() {
     }
 
     const li = document.createElement('li');
+    li.className = 'budget-item';
     li.innerHTML = `
         <div class="budget-header">
-          <span class="budget-category">${budget.category}</span>
-          <button class="delete-btn" title="Delete"><i class="fa-solid fa-xmark"></i></button>
+          <div class="budget-info">
+             <div class="category-icon"><i class="fa-solid fa-tag"></i></div>
+             <h3>${budget.category}</h3>
+          </div>
+          <button class="delete-btn" title="Delete" data-id="${budget._id}" style="background: none; border: none; color: var(--text-gray); cursor: pointer;"><i class="fa-solid fa-trash"></i></button>
         </div>
-        <div class="budget-info">
+        <div class="budget-stats" style="margin-bottom: 8px; display: flex; justify-content: space-between;">
           <span>₦${formatAmount(spent)} spent</span>
-          <span>of ₦${formatAmount(budget.amount)}</span>
+          <span>Target: ₦${formatAmount(budget.amount)}</span>
         </div>
         <div class="progress-container">
-          <div class="progress-bar" data-width="${percentageUsed}" style="background-color: ${barColor}; width: 0%"></div>
+          <div class="progress-bar" style="background: ${barColor}; width: 0%" data-width="${percentageUsed}%"></div>
         </div>
+        <div style="text-align: right; font-size: 12px; color: ${barColor}; margin-top: 4px;">${percentageUsed}%</div>
       `;
 
-    li.querySelector('.delete-btn').addEventListener('click', () => {
+    // Delete functionality
+    li.querySelector('.delete-btn').addEventListener('click', async (e) => {
+      const id = e.currentTarget.getAttribute('data-id');
       if (confirm('Delete this budget?')) {
-        budgets.splice(index, 1);
-        saveBudgets();
-        renderBudgets();
+        await deleteBudget(id);
       }
     });
 
@@ -98,28 +128,62 @@ async function renderBudgets() {
     // Animate progress bar
     setTimeout(() => {
       const progressBar = li.querySelector('.progress-bar');
-      if (progressBar) progressBar.style.width = `${percentageUsed}%`;
+      if (progressBar) progressBar.style.width = progressBar.getAttribute('data-width');
     }, 100);
   });
 
   updateChart(transactions);
 }
 
-form.addEventListener('submit', (e) => {
+async function deleteBudget(id) {
+  const token = localStorage.getItem('token');
+  try {
+    const res = await fetch(`http://localhost:5000/api/budgets/${id}`, {
+      method: 'DELETE',
+      headers: { 'x-auth-token': token }
+    });
+
+    if (res.ok) {
+      fetchBudgets(); // Refresh list
+    } else {
+      alert('Failed to delete budget');
+    }
+  } catch (err) {
+    console.error('Error deleting budget:', err);
+  }
+}
+
+form.addEventListener('submit', async (e) => {
   e.preventDefault();
 
   const category = categoryInput.value.trim();
   const amount = parseFloat(amountInput.value);
+  const token = localStorage.getItem('token');
 
   if (category === '' || isNaN(amount)) {
     alert('Please enter a valid category and amount.');
     return;
   }
 
-  budgets.push({ category, amount });
-  saveBudgets();
-  renderBudgets();
-  form.reset();
+  try {
+    const res = await fetch('http://localhost:5000/api/budgets', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': token
+      },
+      body: JSON.stringify({ category, amount })
+    });
+
+    if (res.ok) {
+      form.reset();
+      fetchBudgets(); // Refresh list
+    } else {
+      alert('Failed to add budget');
+    }
+  } catch (err) {
+    console.error('Error adding budget:', err);
+  }
 });
 
 function updateChart(transactions) {
@@ -156,8 +220,6 @@ function updateChart(transactions) {
     window.spendingChart.destroy();
   }
 
-  // If no data, show empty chart or message? Chart.js handles empty data gracefully usually
-
   Chart.defaults.color = '#94a3b8';
   Chart.defaults.borderColor = 'rgba(255, 255, 255, 0.1)';
 
@@ -191,4 +253,4 @@ function updateChart(transactions) {
 }
 
 // Init
-renderBudgets();
+fetchBudgets();

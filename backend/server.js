@@ -17,6 +17,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/transactions', require('./routes/transactions'));
+app.use('/api/budgets', require('./routes/budgetRoutes'));
 
 // Serve static files from the root directory
 app.use(express.static(path.join(__dirname, '../')));
