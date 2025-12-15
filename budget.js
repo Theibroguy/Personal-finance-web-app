@@ -275,7 +275,7 @@ function updateChart(transactions) {
     "Healthcare": "#FF0000",
     "Entertainment": "#36A2EB",
     "Shopping": "#9C27B0",
-    "Education": "#03A9F4",
+    "Education": "#FF9800",
     "Savings & Investments": "#009688",
     "Debt Payments": "#795548",
     "Personal Care": "#E91E63",

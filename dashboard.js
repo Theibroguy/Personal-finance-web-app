@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     "Healthcare": "#FF0000",
     "Entertainment": "#36A2EB",
     "Shopping": "#9C27B0",
-    "Education": "#03A9F4",
+    "Education": "#FF9800",
     "Savings & Investments": "#009688",
     "Debt Payments": "#795548",
     "Personal Care": "#E91E63",
@@ -249,6 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateSummary();
         updateChart();
         form.reset();
+        updateCategoryOptions(typeInput.value);
 
         // Hide Modal
         confirmationModal.classList.remove('active');
@@ -342,19 +343,50 @@ document.addEventListener('DOMContentLoaded', () => {
         datasets: [{
           data: amounts,
           backgroundColor: colors,
-          borderWidth: 0
+          borderWidth: 0,
+          hoverOffset: 4
         }]
       },
       options: {
         responsive: true,
+        maintainAspectRatio: false,
+        cutout: '65%',
         plugins: {
           legend: {
-            position: 'bottom',
-            labels: { color: textColor, font: { family: "'Outfit', sans-serif" } }
+            display: false // Disable default legend
+          },
+          tooltip: {
+            callbacks: {
+              label: function (context) {
+                let label = context.label || '';
+                if (label) label += ': ';
+                label += '₦' + context.parsed.toLocaleString();
+                return label;
+              }
+            }
           }
         }
       }
     });
+
+    // --- Generate Custom Legend ---
+    const legendContainer = document.getElementById('expenseLegend');
+    if (legendContainer) {
+      legendContainer.innerHTML = categories.map((cat, index) => {
+        const amount = amounts[index];
+        const color = colors[index];
+        const formattedAmount = '₦' + amount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return `
+          <div class="legend-item">
+            <div class="legend-info">
+              <span class="color-box" style="background-color: ${color};"></span>
+              <span>${cat}</span>
+            </div>
+            <span class="legend-amount">${formattedAmount}</span>
+          </div>
+        `;
+      }).join('');
+    }
 
     // --- Bar Chart ---
     if (expenseBarChart) expenseBarChart.destroy();

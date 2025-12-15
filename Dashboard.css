@@ -3,7 +3,8 @@
   --primary-color: #6366f1;
   --secondary-color: #a855f7;
   --accent-color: #ec4899;
-  --background-dark: #f8fafc;
+  --background-dark: #e2e8f0;
+  /* Darker gray for better contrast with white cards */
   /* Lighter background for better contrast */
   --card-bg: #ffffff;
   /* Solid white for cards */
@@ -14,8 +15,9 @@
   --success: #10b981;
   --danger: #ef4444;
   --warning: #f59e0b;
-  --glass-border: rgba(0, 0, 0, 0.05);
-  --glass-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --glass-border: rgba(0, 0, 0, 0.15);
+  /* Darkened from 0.05 */
+  --glass-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   --input-bg: #ffffff;
   --sidebar-bg: #ffffff;
 }
@@ -399,6 +401,69 @@ body.light-mode .sidebar nav ul li.active a {
   position: relative;
   display: flex;
   justify-content: center;
+  align-items: center;
+}
+
+.pie-container {
+  flex-direction: column;
+  gap: 16px;
+}
+
+.canvas-wrapper {
+  position: relative;
+  height: 200px;
+  /* Constrain chart height explicitly */
+  width: 200px;
+  display: flex;
+  justify-content: center;
+}
+
+.chart-legend {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+/* Custom Scrollbar for Legend */
+.chart-legend::-webkit-scrollbar {
+  width: 4px;
+}
+
+.chart-legend::-webkit-scrollbar-thumb {
+  background: var(--glass-border);
+  border-radius: 4px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--bg-dark);
+  /* Contrast background */
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-light);
+}
+
+.legend-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.color-box {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+}
+
+.legend-amount {
+  font-weight: 600;
 }
 
 .chart-divider {
